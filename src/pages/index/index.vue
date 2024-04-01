@@ -4,7 +4,7 @@
 
      hallow world
      这是一个demo
-     
+     11
 
     <view>
       {{profile?.name }}
@@ -139,7 +139,7 @@ const state = {
   bar: 2
 };
 
-(window as any).ss =state
+// (window as any).ss =state
 // 双向 ref，会与源属性同步
 const fooRef = toRef(state, 'foo')
 
