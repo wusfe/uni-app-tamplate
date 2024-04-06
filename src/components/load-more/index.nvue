@@ -1,0 +1,18 @@
+<template>
+    <list class="scroll-v list" enableBackToTop="true" scroll-y alwaysScrollableVertical="true">
+	<refresh class="refresh" @refresh="onrefresh()" @pullingdown="onpullingdown">
+		<!-- refresh content -->
+	</refresh>
+	<cell >
+		<slot></slot>
+	</cell>
+</list>
+</template>
+
+<script setup >
+
+</script>
+
+<style scoped>
+
+</style>

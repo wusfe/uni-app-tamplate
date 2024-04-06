@@ -3,51 +3,221 @@
 		"autoscan": true,
 		"custom": {
 			// uni-ui 规则如下配置
-			"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
+			"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue",
+			"^mc-(.*)": "mescroll-uni/mescroll-$1.vue",
+			"^mcc-(.*)": "mescroll-uni/components/mescroll-$1.vue"
 		}
 	},
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-	{
-		"path": "pages/home/home",
-		"style": {
-			"navigationBarTitleText": "首页",
-			"navigationStyle": "custom"
-		}
-	},
-		
+	"pages": [
+		{
+			"path": "pages/steamer-arrival/steamer-arrival",
+			"style": {
+				"navigationBarTitleText": "今日船只"
+			}
+		},
+		{
+			"path": "pages/mancar-manage/mancar-manage",
+			"style": {
+				"navigationBarTitleText": "计人计车"
+			}
+		},
+		{
+			"path": "pages/dispatch-detail/dispatch-detail",
+			"style": {
+				"navigationBarTitleText": "调度详情"
+			}
+		},
+		{
+			"path": "pages/dispatch-add/dispatch-add",
+			"style": {
+				"navigationBarTitleText": "新增调度"
+			}
+		},
+		{
+			"path": "pages/dispatch-manage/dispatch-manage",
+			"style": {
+				"navigationBarTitleText": "调度管理",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [
+							{
+								"text": "新增",
+								"fontSize": "14",
+								"redDot": false,
+								"color": "#007aff",
+								"width": "40px"
+							}
+						]
+					}
+				}
+			}
+		},
+		{
+			"path": "pages/material-apply/material-apply",
+			"style": {
+				"navigationBarTitleText": "领用申请"
+			}
+		},
+		{
+			"path": "pages/material-detail/material-detail",
+			"style": {
+				"navigationBarTitleText": "领用详情"
+			}
+		},
+		{
+			"path": "pages/material-record/material-record",
+			"style": {
+				"navigationBarTitleText": "领用记录"
+			}
+		},
+		{
+			"path": "pages/material-manage/material-manage",
+			"style": {
+				"navigationBarTitleText": "物料领用",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [
+							{
+								"type": "menu"
+							}
+						]
+					}
+				}
+			}
+		},
+		{
+			"path": "pages/store-manage/store-manage",
+			"style": {
+				"navigationBarTitleText": "仓库管理",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [
+							{
+								"type": "menu"
+							}
+						]
+					}
+				}
+			}
+		},
+		{
+			"path": "pages/store-purchase/store-purchase",
+			"style": {
+				"navigationBarTitleText": "仓库购入"
+			}
+		},
+		{
+			"path": "pages/store-edit/store-edit",
+			"style": {
+				"navigationBarTitleText": "仓库编辑"
+			}
+		},
+		{
+			"path": "pages/store-manage-detail/store-manage-detail",
+			"style": {
+				"navigationBarTitleText": "仓库详情"
+			}
+		},
+		{
+			"path": "pages/qr-result/qr-result",
+			"style": {
+				"navigationBarTitleText": "扫码结果"
+			}
+		},
+		{
+			"path": "pages/history-order/history-order",
+			"style": {
+				"navigationBarTitleText": "历史订单"
+			}
+		},
+		{
+			"path": "pages/order-detail/order-detail",
+			"style": {
+				"navigationBarTitleText": "订单详情"
+			}
+		},
+		{
+			"path": "pages/approval/approval",
+			"style": {
+				"navigationBarTitleText": "待我审批"
+			},
+			"app-plus": {
+				"bounce": "none" // 取消APP端iOS回弹,避免与下拉刷新冲突 (可统一配在 'globalStyle')
+			}
+		},
+		{
+			"path": "pages/today-order/today-order",
+			"style": {
+				"navigationBarTitleText": "今日订单"
+			}
+		},
+		{
+			"path": "pages/news/news",
+			"style": {
+				"navigationBarTitleText": "消息中心"
+			}
+		},
+		{
+			"path": "pages/home/home",
+			"style": {
+				"navigationBarTitleText": "首页",
+				"navigationStyle": "custom"
+			}
+		},
+		//pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/more-notice/more-notice",
+			"style": {
+				"navigationBarTitleText": "公告",
+				"enablePullDownRefresh": false,
+				"app-plus": {
+					"titleNView": {
+						"autoBackButton": true,
+						"buttons": [
+							{
+								"text": "添加",
+								"fontSize": "14",
+								"redDot": false,
+								"color": "#007aff",
+								"width": "40px"
+							}
+						]
+					}
+				}
+			}
+		},
 		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "uni-app"
 			}
-		}
-
+		},
+		
 	],
 	// 设置 TabBar
 	"tabBar": {
 		"color": "#333",
-		"selectedColor": "#27ba9b",
+		"selectedColor": "#007aff",
 		"backgroundColor": "#fff",
 		"borderStyle": "white",
 		"list": [
 			{
 				"text": "首页",
-				"pagePath": "pages/index/index"
-				// "iconPath": "static/tabs/home_default.png",
-				// "selectedIconPath": "static/tabs/home_selected.png"
+				"pagePath": "pages/home/home",
+				"iconPath": "static/tab-home.png",
+				"selectedIconPath": "static/tab-home-select.png"
 			},
 			{
 				"text": "分类",
-				"pagePath": "pages/category/category"
-				// "iconPath": "static/tabs/category_default.png",
-				// "selectedIconPath": "static/tabs/category_selected.png"
+				"pagePath": "pages/category/category",
+				"iconPath": "static/tab-yingyong.png",
+				"selectedIconPath": "static/tab-yingyong-select.png"
 			},
-
 			{
 				"text": "我的",
-				"pagePath": "pages/my/my"
-				// "iconPath": "static/tabs/user_default.png",
-				// "selectedIconPath": "static/tabs/user_selected.png"
+				"pagePath": "pages/my/my",
+				"iconPath": "static/tab-me.png",
+				"selectedIconPath": "static/tab-me-select.png"
 			}
 		]
 	},

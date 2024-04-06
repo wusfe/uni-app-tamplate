@@ -1,0 +1,99 @@
+@font-face {
+  font-family: "zhfont"; /* Project id 4490099 */
+  src: url('iconfont.ttf?t=1712484307562') format('truetype');
+       
+       
+}
+
+.zhfont {
+  font-family: "zhfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.zh-qiandai:before {
+  content: "\e601";
+}
+
+.zh-chuzu:before {
+  content: "\e602";
+}
+
+.zh-icon_shenti_nan:before {
+  content: "\e603";
+}
+
+.zh-xuanzeshijian:before {
+  content: "\e611";
+}
+
+.zh-a-renyuanmingdanbiaodan_huaban1:before {
+  content: "\e627";
+}
+
+.zh-shaixuan:before {
+  content: "\e74a";
+}
+
+.zh-shouye:before {
+  content: "\e64f";
+}
+
+.zh-wode:before {
+  content: "\e8a0";
+}
+
+.zh-yingyong:before {
+  content: "\e626";
+}
+
+.zh-jinridingdan1:before {
+  content: "\e69f";
+}
+
+.zh-tiaodu1:before {
+  content: "\e670";
+}
+
+.zh-n:before {
+  content: "\e616";
+}
+
+.zh-gerencheyuan:before {
+  content: "\e686";
+}
+
+.zh-yanpiao:before {
+  content: "\e63d";
+}
+
+.zh-dingdantongji:before {
+  content: "\e6e7";
+}
+
+.zh-cangkuguanli:before {
+  content: "\e622";
+}
+
+.zh-Ship-:before {
+  content: "\e9ec";
+}
+
+.zh-shipinjiankong:before {
+  content: "\e64e";
+}
+
+.zh-caiwuguanli:before {
+  content: "\e9e5";
+}
+
+.zh-lishidingdan:before {
+  content: "\e600";
+}
+
+.zh-fangpengzhuang:before {
+  content: "\e64d";
+}
+

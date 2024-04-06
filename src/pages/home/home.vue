@@ -1,6 +1,6 @@
 <template>
-  <view class="home bg-#f5f5f5 h-100vh">
-    <navigation-bar />
+  <view class="home bg-#f5f5f5 min-h-100vh">
+    <bar-area area="top" />
     <!-- 欢迎行 -->
     <view class="flex justify-between pb-3 pt-3 bg-white pl-3 pr-3">
       <view class="flex justify-center items-center">
@@ -35,11 +35,10 @@
 				text="uni-app 版正式发布，开发一次，同时发布iOS、Android、H5、微信小程序、支付宝小程序、百度小程序、头条小程序等7大平台。" />
 
       </view>
-      <view class="text-red-700 shrink-0">更多</view>
+      <view class="text-red-700 shrink-0" @tap="handleMore()">更多</view>
     </view>
 
-    <!-- 1 -->
-
+    
     <view class="pl-3 pr-3 mt-3 ">
       <uni-card is-full :is-shadow="false" margin="0" padding="0" :border="false">
           <view class="flex pt-7 pb-4">
@@ -57,7 +56,7 @@
                     <text class="text-70rpx text-color-#000000">6</text>
                   </uni-badge>
                 </view>
-                <view class="text-color-#000000">今日审批</view>
+                <view class="text-color-#000000" @tap="handleTo('approval')">今日审批</view>
               </view>
               <view class="w-33.33% text-center" >
                 <view class="mb-1">
@@ -71,75 +70,107 @@
       </uni-card>
     </view>
 
-    <view>
+    <view class="pl-3 pr-3 mt-3">
 
-      <uni-grid :column="4" :highlight="true" >
-				<uni-grid-item v-for="(item, index) in menu" :index="index" :key="index">
-					<view class="grid-item-box" style="background-color: #fff;">
-						<uni-icons type="image" :size="30" color="#777" />
-						<text class="text">文本信息</text>
+      <uni-row :gutter="40">
+				<uni-col class="mt-3"  :span="6" v-for="(item, index) in menu" :index="index" :key="index">
+					<view class="flex flex-col">
+						<view :style="{backgroundColor: item.bg}" class="pt-4 pb-4 flex justify-center items-center rounded-10rpx mb-1 shrink-0" >
+              <component :is="item.icon" class="text-size-60rpx"></component>
+            </view>
+						<text class="text text-center">{{ item.text }}</text>
 					</view>
-				</uni-grid-item>
-			</uni-grid>
+				</uni-col>
+			</uni-row >
     </view>
+
+
+    <bar-area area="bottom" />
   </view>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 // 报错
 // import NavigationBar from "@/components/navigation-bar"
-import NavigationBar from '@/components/navigation-bar/index.vue';
+
 
 const menu = [
   {
-    icon: '',
+    icon: <i class='zhfont zh-jinridingdan1 text-color-white'></i>,
+    bg:  '#032585EE',
     text: '今日订单'
   },
   {
-    icon: '',
+    icon: <i class='zhfont zh-lishidingdan text-color-white'></i>,
+    bg:  '#52CC6F',
     text: '历史订单'
   },
   {
-    icon: '',
+    icon: <i class='zhfont zh-yanpiao text-color-white'></i>,
+    bg:  '#FE7849',
     text: '验票'
   },
   {
-    icon: '',
+    icon: <i class='zhfont zh-tiaodu1 text-color-white'></i>,
+    bg:  '#C465E2',
     text: '调度'
   },
   {
-    icon: '',
+    icon: <i class='zhfont zh-cangkuguanli text-color-white'></i>,
+    bg:  '#5756D7',
     text: '仓库管理'
   },
   {
-    icon: '',
+    icon: <i class='zhfont zh-shipinjiankong text-color-white'></i>,
+    bg:  '#FF9502',
     text: '视频监控'
   },
   {
-    icon: '',
+    icon: <i class='zhfont zh-caiwuguanli text-color-white'></i>,
+    bg:  '#5AC8FA',
     text: '财务管理'
   },
   {
-    icon: '',
+    icon: <i class='zhfont zh-gerencheyuan text-color-white'></i>,
+    bg:  '#FF2D55',
     text: '计人计车'
   },
   {
-    icon: '',
+    icon: <i class='zhfont zh-dingdantongji text-color-white'></i>,
+    bg:  '#00E5FF',
     text: '订单统计'
   },
   {
-    icon: '',
+    icon: <i class='zhfont zh-fangpengzhuang text-color-white'></i>,
+    bg: '#2585EE',
     text: '仿碰撞'
   },
   {
-    icon: '',
+    icon: <i class='zhfont zh-n text-color-white'></i>,
+    bg: '#651FFF',
     text: '通知消息'
   },
   {
-    icon: '',
+    icon: <i class='zhfont zh-Ship- text-color-white'></i>,
+    bg: '#651FFF',
     text: '渡船营运'
   },
 ]
+
+const handleMore = () => {
+  uni.navigateTo({
+    url:'/pages/more-notice/more-notice',
+  })
+}
+
+const handleTo = (type:string) => {
+  if(type === 'approval'){
+    uni.navigateTo({url: '/pages/approval/approval'})
+  }
+  
+}
+// console.log(ssss);
+
 </script>
 
 <style scoped>
