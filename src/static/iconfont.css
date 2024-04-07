@@ -1,9 +1,8 @@
 @font-face {
   font-family: "zhfont"; /* Project id 4490099 */
-  src: url('iconfont.ttf?t=1712484307562') format('truetype');
-       
-       
+  src: url('iconfont.ttf?t=1712501283385') format('truetype');
 }
+       
 
 .zhfont {
   font-family: "zhfont" !important;
@@ -11,6 +10,26 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.zh-daiwoshenpi:before {
+  content: "\e6c8";
+}
+
+.zh-wofaqideshenpi:before {
+  content: "\e604";
+}
+
+.zh-navicon-gggl:before {
+  content: "\e666";
+}
+
+.zh-wocanyu:before {
+  content: "\e979";
+}
+
+.zh-xiaoxizhongxin:before {
+  content: "\e617";
 }
 
 .zh-qiandai:before {

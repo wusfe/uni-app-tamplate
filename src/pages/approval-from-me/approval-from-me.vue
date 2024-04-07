@@ -1,17 +1,27 @@
 <template>
   <view class="flex flex-col h-100%">
-    <view class="shrink-0">
-      <view class="flex justify-between items-center bg-#ffffff pt-3 pb-3 pl-3 pr-3">
-        <view class="text-color-primary">今日船只：</view>
+    <!-- 头部 -->
+    <view class="bg-#ffffff   shrink-0">
+      <dropDownBox class="pt-3">
+        <template v-slot:top>
+          <view class="pl-4 pr-4 mb-1">
+            <searchBar placeholder="输入编号、名称" radius="60" />
+          </view>
+        </template>
+        <view class="flex pl-4 ">
+         <view class="w-50% flex justify-center items-center br1">
+          <dropDownScrollView placeholder="请选择审批类型" :list="range" />
+         </view>
+         
 
-        <!-- <view class="flex justify-between items-center">
-          <text class="text-color-primary text-xs mr-1">选择时间</text>
+         <view class="w-50% flex justify-center items-center">
+          <dropDownScrollView placeholder="请选择审批状态" :list="range" />
+         </view>
 
-          <i class="zhfont zh-xuanzeshijian"> </i>
-        </view> -->
-      </view>
+        </view>
+      </dropDownBox>
     </view>
-    
+
     <view class="grow-1 min-h-0">
       <mc-uni
         :fixed="false"
@@ -22,26 +32,23 @@
         @down="downCallback"
         @up="upCallback"
       >
-        <view v-for="v in data" class="pl-3 pr-3 mt-3">
-          <view
-            class="bg-#ffffff px-4 py-4 rounded-20rpx border-1px border-color-gray-3 border-solid"
-          >
-            <view class="flex justify-between items-center">
-              <view class="color-gray-4">船号：kk22210</view>
-              <view class="color-gray-4">状态：到达</view>
+        <view class="bg-#ffffff data-item" v-for="v in data">
+          <view class="pt-3 pb-3 pl-3 pr-3 flex">
+            <view class="text-center shrink-0">
+              <image src="/static/avr.png" class="w-100rpx h-100rpx" mode="scaleToFill"></image>
+              <view class="mt-1"><text class="text-sm">丁曼容</text></view>
             </view>
 
-            <view class="flex items-center justify-around mt-4">
-             
-              <view class="w-100rpx h-100rpx bg-#12C11D rounded-50% mb-2 flex justify-center items-center">
-                  <i class="zhfont zh-Ship- color-#ffffff  text-56rpx"></i>
-                </view>
+            <view class="ml-3 pt-1.5 grow-1">
+              <view class="mb-1"><text class="">APPR202210130001</text></view>
+              <view><text class="text-sm">丁曼容发起的发动机领用审批</text></view>
+            </view>
 
-
-                <view class="">
-                  <button type="primary" size="mini" plain class="block" style="border-radius: 30rpx;padding: 0rpx 60rpx">到达</button>
-                </view>
-              
+            <view class="pt-1.5 flex flex-col justify-between shrink-0">
+              <view><text class="color-gray-400">2022/10/13</text></view>
+              <view class="text-right">
+                <text class="text-color-primary">审核中</text>
+              </view>
             </view>
           </view>
         </view>
@@ -50,10 +57,21 @@
   </view>
 </template>
 
-<script setup lang="ts">
-import { onLoad, onPageScroll, onReachBottom } from '@dcloudio/uni-app'
-import { ref, computed } from 'vue'
+<script setup lang="tsx">
+import singleSelect from '@/components/single-select/index.vue'
+import searchBar from '@/components/search-bar/index.vue'
 import { sleep, useMescroll } from '@/composables'
+import { computed, ref } from 'vue'
+import { onLoad, onPageScroll, onReachBottom } from '@dcloudio/uni-app'
+import dropDownScrollView from '@/components/drop-down-scroll-view/index.vue'
+import dropDownBox from '@/components/drop-down-scroll-view/drop-down-box.vue'
+
+const range = [
+  { value: 0, label: '全部' },
+  { value: 1, label: '待审核' },
+  { value: 2, label: '已审核' },
+]
+
 const { mescrollInit, getMescroll } = useMescroll(onPageScroll, onReachBottom) // 调用mescroll的hook
 
 const mescroll = computed(() => getMescroll()) as any // 必须使用计算属性才可及时获取到mescroll对象,此处是me-video中使用
@@ -131,4 +149,26 @@ const downCallback = async (ms: any) => {
 }
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.data-item{
+  position: relative;
+
+  &::after {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      height: 1px;
+      content: '';
+      -webkit-transform: scaleY(0.5);
+      transform: scaleY(0.5);
+      background-color: #e5e5e5;
+    }
+}
+.br1{
+  &::after {
+      top: 20rpx;
+      bottom: 20rpx;
+    }
+}
+</style>

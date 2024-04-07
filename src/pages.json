@@ -10,6 +10,44 @@
 	},
 	"pages": [
 		{
+			"path": "pages/notice-add/notice-add",
+			"style": {
+				"navigationBarTitleText": "添加公告"
+			}
+		},
+		{
+			"path": "pages/user-center/user-center",
+			"style": {
+				"navigationBarTitleText": "个人中心",
+				"navigationBarBackgroundColor": "#007aff",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/operation-process/operation-process",
+			"style": {
+				"navigationBarTitleText": "运维任务"
+			}
+		},
+		{
+			"path": "pages/approval-from-me/approval-from-me",
+			"style": {
+				"navigationBarTitleText": "我参与的"
+			}
+		},
+		{
+			"path": "pages/operation-task-add/operation-task-add",
+			"style": {
+				"navigationBarTitleText": "新增运维任务"
+			}
+		},
+		{
+			"path": "pages/finance-manage/finance-manage",
+			"style": {
+				"navigationBarTitleText": "财务总览"
+			}
+		},
+		{
 			"path": "pages/steamer-arrival/steamer-arrival",
 			"style": {
 				"navigationBarTitleText": "今日船只"
