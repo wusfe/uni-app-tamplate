@@ -96,4 +96,12 @@ uni-button[size='mini']{
 .text-align-last-justify {
   text-align-last: justify;
 }
+
+.red{
+  color: $uni-color-error;
+}
+
+.pric{
+  color: #007aff;
+}
 </style>

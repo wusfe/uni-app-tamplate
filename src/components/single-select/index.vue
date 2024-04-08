@@ -26,7 +26,12 @@
         <view class="uni-select--mask" v-if="showSelector" @click="toggleSelector" @touchmove.prevent/>
         <view class="uni-select__selector" :style="getOffsetByPlacement" v-if="showSelector">
           <view
-            :class="placement == 'bottom' ? 'uni-popper__arrow_bottom' : 'uni-popper__arrow_top'"
+           
+            :class="{
+              'uni-popper__arrow_bottom':placement == 'bottom',
+              'uni-popper__arrow_top': !placement == 'bottom',
+              'd-right': arrowDirect === 'right'
+            }"
           ></view>
           <scroll-view scroll-y="true" class="uni-select__selector-scroll">
             <view class="uni-select__selector-empty" v-if="mixinDatacomResData.length === 0">
@@ -123,6 +128,10 @@ export default {
       type: String,
       default: 'bottom',
     },
+    arrowDirect:{
+      type: String,
+      default: 'left',
+    }
   },
   data() {
     return {
@@ -137,12 +146,12 @@ export default {
   created() {
      // 执行注入
     this.provideRegistrySelect &&  this.provideRegistrySelect(this)
-    this.debounceGet = this.debounce(() => {
-      this.query()
-    }, 300)
-    if (this.collection && !this.localdata.length) {
-      this.debounceGet()
-    }
+    // this.debounceGet = this.debounce(() => {
+    //   this.query()
+    // }, 300)
+    // if (this.collection && !this.localdata.length) {
+    //   this.debounceGet()
+    // }
   },
   computed: {
     typePlaceholder() {
@@ -512,7 +521,7 @@ $uni-border-3: #e5e5e5;
   text-align: center;
   /* border-bottom: solid 1px $uni-border-3; */
   padding: 0px 10px;
-
+  color: rgb(51,51,51);
   &__select {
     uni-text {
         color:$uni-color-primary;
@@ -540,7 +549,9 @@ $uni-border-3: #e5e5e5;
 .uni-popper__arrow_bottom,
 .uni-popper__arrow_bottom::after,
 .uni-popper__arrow_top,
-.uni-popper__arrow_top::after {
+.uni-popper__arrow_top::after,
+.uni-popper__arrow_right,
+.uni-popper__arrow_right:after {
   position: absolute;
   display: block;
   width: 0;
@@ -549,6 +560,14 @@ $uni-border-3: #e5e5e5;
   border-style: solid;
   border-width: 6px;
 }
+.d-right{
+  right: 0!important;
+  left: auto!important;
+}
+// .d-right::after{
+//   right: 10%!important;
+//   left: 0!important;
+// }
 
 .uni-popper__arrow_bottom {
   filter: drop-shadow(0 2px 12px rgba(0, 0, 0, 0.03));

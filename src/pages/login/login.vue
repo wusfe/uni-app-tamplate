@@ -1,10 +1,10 @@
 <template>
-  <view class="h-100vh box-border bg login pt-15">
+  <view class="h-100% box-border bg login pt-15">
     <view class="flex flex-col items-center">
       <view class="text-white font-600 text-8 mb-6"> 智慧轮渡</view>
       <image class="w-30 h-30" src="/static/logo.png" mode="aspectFill" />
 
-      <view class="pl-10 pr-10 pt-8 pb-8 w-55 mt-4" bg="[rgba(255,255,255,0.3)]">
+      <view class="pl-10 pr-10 pt-8 pb-4 w-55 mt-4 rounded-15rpx" bg="[rgba(255,255,255,0.3)]">
         <uni-forms ref="form" :rules="rules">
           <uni-forms-item name="">
             <uni-easyinput :inputBorder="false" disableColor="transparent" placeholder="请输入姓名">
@@ -23,7 +23,7 @@
           </uni-forms-item>
 
           <uni-forms-item label="" name="">
-            <button type="primary" @click="submit()">提交</button>
+            <button type="primary" @click="submit()">登录</button>
           </uni-forms-item>
         </uni-forms>
       </view>

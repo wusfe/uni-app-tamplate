@@ -33,94 +33,89 @@
           <view>
             <text>总金额：</text>
             <text class="red font-700">88888元</text>
-            <text class="pric text-sm ml-20rpx">较昨日下降20%</text>
           </view>
+          <view class="mt-2">
+            <text>订单总数：</text>
+            <text class="red font-700">1002</text>
+          </view>
+
         </view>
 
-        <view class="mt-5">
+        <view class="mt-6">
           <view class="px-4">
-            <uni-swipe-action>
-              <uni-swipe-action-item class="bb1 pb-2">
-                <template v-slot:right>
-                  <view class="flex flex-col">
-                    <view
-                      class="h-50% bg-#007aff color-#ffffff text-sm flex justify-center items-center px-18rpx"
-                      >详情</view
-                    >
-                    <view
-                      class="h-50% bg-#4cd964 color-#ffffff text-sm flex justify-center items-center px-18rpx"
-                      >编辑</view
-                    >
-                  </view>
-                </template>
-
+            <view class="bb1 pb-2">
                 <view class="flex flex-col">
                   <view class="flex items-baseline mb-2">
-                    <text class="w-136rpx text-align-last-justify align-middle">车道号</text>
+                    <text class="w-136rpx text-align-last-justify align-middle">订单类型</text>
                     <text>：</text>
-                    <text class="ml-1">SDZZ000001</text>
+                    <text class="ml-1">小程序散客</text>
                   </view>
                   <view class="flex items-baseline mb-2">
-                    <text class="w-136rpx text-align-last-justify align-middle">员工姓名</text>
+                    <text class="w-136rpx text-align-last-justify align-middle">订单数</text>
                     <text>：</text>
-                    <text class="ml-1">王漫</text>
+                    <text class="ml-1">100</text>
                   </view>
                   <view class="flex items-baseline mb-2">
-                    <text class="w-136rpx text-align-last-justify align-middle">所属部门</text>
+                    <text class="w-136rpx text-align-last-justify align-middle">订单金额</text>
                     <text>：</text>
-                    <text class="ml-1">技术部</text>
+                    <text class="ml-1">200</text>
                   </view>
-                  <view class="flex items-baseline mb-2">
-                    <text class="w-136rpx text-align-last-justify align-middle">所属岗位</text>
-                    <text>：</text>
-                    <text class="ml-1">产品经理</text>
-                  </view>
+                  
                 </view>
-              </uni-swipe-action-item>
 
-              <uni-swipe-action-item class="bb1 pb-3 mt-3">
-                <template v-slot:right>
-                  <view class="flex flex-col">
-                    <view
-                      class="h-50% bg-#007aff color-#ffffff text-sm flex justify-center items-center px-18rpx"
-                      >详情</view
-                    >
-                    <view
-                      class="h-50% bg-#4cd964 color-#ffffff text-sm flex justify-center items-center px-18rpx"
-                      >编辑</view
-                    >
-                  </view>
-                </template>
+               
+              </view>
 
+              <view class="bb1 pb-2 mt-3">
                 <view class="flex flex-col">
                   <view class="flex items-baseline mb-2">
-                    <text class="w-136rpx text-align-last-justify align-middle">车道号</text>
+                    <text class="w-136rpx text-align-last-justify align-middle">订单类型</text>
                     <text>：</text>
-                    <text class="ml-1">SDZZ000001</text>
+                    <text class="ml-1">小程序散客</text>
                   </view>
                   <view class="flex items-baseline mb-2">
-                    <text class="w-136rpx text-align-last-justify align-middle">收费员</text>
+                    <text class="w-136rpx text-align-last-justify align-middle">订单数</text>
                     <text>：</text>
-                    <text class="ml-1">王漫</text>
+                    <text class="ml-1">100</text>
                   </view>
                   <view class="flex items-baseline mb-2">
-                    <text class="w-136rpx text-align-last-justify align-middle">班次</text>
+                    <text class="w-136rpx text-align-last-justify align-middle">订单金额</text>
                     <text>：</text>
-                    <text class="ml-1">SK00212</text>
+                    <text class="ml-1">200</text>
                   </view>
-                  <view class="flex items-baseline mb-2">
-                    <text class="w-136rpx text-align-last-justify align-middle">收入金额</text>
-                    <text>：</text>
-                    <text class="ml-1 red">1111</text>
-                  </view>
+                  
                 </view>
-              </uni-swipe-action-item>
-            </uni-swipe-action>
+
+               
+              </view>
+
+              <view class="bb1 pb-2 mt-3">
+                <view class="flex flex-col">
+                  <view class="flex items-baseline mb-2">
+                    <text class="w-136rpx text-align-last-justify align-middle">订单类型</text>
+                    <text>：</text>
+                    <text class="ml-1">小程序散客</text>
+                  </view>
+                  <view class="flex items-baseline mb-2">
+                    <text class="w-136rpx text-align-last-justify align-middle">订单数</text>
+                    <text>：</text>
+                    <text class="ml-1">100</text>
+                  </view>
+                  <view class="flex items-baseline mb-2">
+                    <text class="w-136rpx text-align-last-justify align-middle">订单金额</text>
+                    <text>：</text>
+                    <text class="ml-1">200</text>
+                  </view>
+                  
+                </view>
+
+               
+              </view>
           </view>
         </view>
 
         <view class="mt-5">
-          <view class="text-xl px-4">车道金额占比分析</view>
+          <view class="text-xl px-4">客源占比分析：</view>
         </view>
       </view>
     </view>

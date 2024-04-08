@@ -10,6 +10,31 @@
 	},
 	"pages": [
 		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+		},
+		{
+			"path": "pages/finance-statistics/finance-statistics",
+			"style": {
+				"navigationBarTitleText": "财务统计"
+			}
+		},
+		{
+			"path": "pages/finance-manage/finance-manage",
+			"style": {
+				"navigationBarTitleText": "财务",
+				"titleNView": false
+			}
+		},
+		{
+			"path": "pages/notice-detail/notice-detail",
+			"style": {
+				"navigationBarTitleText": "公告详情"
+			}
+		},
+		{
 			"path": "pages/notice-add/notice-add",
 			"style": {
 				"navigationBarTitleText": "添加公告"
@@ -39,12 +64,6 @@
 			"path": "pages/operation-task-add/operation-task-add",
 			"style": {
 				"navigationBarTitleText": "新增运维任务"
-			}
-		},
-		{
-			"path": "pages/finance-manage/finance-manage",
-			"style": {
-				"navigationBarTitleText": "财务总览"
 			}
 		},
 		{
@@ -253,7 +272,7 @@
 			},
 			{
 				"text": "我的",
-				"pagePath": "pages/my/my",
+				"pagePath": "pages/user=center/user-center",
 				"iconPath": "static/tab-me.png",
 				"selectedIconPath": "static/tab-me-select.png"
 			}
