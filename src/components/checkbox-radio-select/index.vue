@@ -11,7 +11,7 @@
         read-only
       /> -->
 
-      <image src="@/static/right_icon.png" class="selector-icon"></image>
+      <image src="/static/right_icon.png" class="selector-icon"></image>
     </view>
 
     <popup ref="popup" type="bottom" background-color="#fff">

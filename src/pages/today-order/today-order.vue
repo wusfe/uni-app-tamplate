@@ -1,5 +1,5 @@
 <template>
-  <view class="flex flex-col  h-100%">
+  <view class="flex flex-col h-100%">
     <view class="shrink-0">
       <view class="flex bg-#ffffff">
         <dropDownBox class="grow-1 pl-4 pr-4">
@@ -17,10 +17,22 @@
 
           <view class="flex">
             <view class="mr-2">
-              <dropDownScrollView placeholder="订单类型" :list="options2" />
+              <dropDownScrollView
+                placeholder="订单类型"
+                v-model="searchInput.orderType"
+                :list="orderStore.orderTypeList"
+                @finally="handleFinallySelect"
+              />
             </view>
 
-            <view><dropDownScrollView placeholder="订单状态" :list="options" /></view>
+            <view
+              ><dropDownScrollView
+                placeholder="订单状态"
+                v-model="searchInput.orderState"
+                :defaultValue="-2"
+                :list="orderStore.orderStateList"
+                @finally="handleFinallySelect"
+            /></view>
           </view>
         </dropDownBox>
       </view>
@@ -31,39 +43,15 @@
 
         <view class="pl-4 pr-4 flex justify-between">
           <!-- 左边 -->
-          <view class="shrink-0 mr-2">
-            <view class="flex mb-2">
+
+          <view class="shrink-0 mr-2" v-for="v in todayLiInfo">
+            <view class="flex mb-2" v-for="item in v">
               <view class="w-168rpx"
-                ><text class="text-color-#606266 text-sm">今日总金额：</text></view
+                ><text class="text-color-#606266 text-sm">{{ item.lable }}：</text></view
               >
-              <view><text class="text-sm">1340万元</text></view>
-            </view>
-
-            <view class="flex mb-2">
-              <view class="w-168rpx"><text class="text-color-#606266 text-sm">二轮车：</text></view>
-              <view><text class="text-sm">1340万元</text></view>
-            </view>
-
-            <view class="flex mb-2">
-              <view class="w-168rpx"><text class="text-color-#606266 text-sm">轿车：</text></view>
-              <view><text class="text-sm">1340万元</text></view>
-            </view>
-          </view>
-          <!-- 右边 -->
-          <view class="shrink-0">
-            <view class="flex mb-2">
-              <view class="w-168rpx"><text class="text-color-#606266 text-sm">散客：</text></view>
-              <view><text class="text-sm">10万元</text></view>
-            </view>
-
-            <view class="flex mb-2">
-              <view class="w-168rpx"><text class="text-color-#606266 text-sm">三轮车：</text></view>
-              <view><text class="text-sm">10万元</text></view>
-            </view>
-
-            <view class="flex mb-2">
-              <view class="w-168rpx"><text class="text-color-#606266 text-sm">ETC收费:</text></view>
-              <view><text class="text-sm">10万元</text></view>
+              <view
+                ><text class="text-sm">{{ $tranNumber(item.value, 2) }}</text></view
+              >
             </view>
           </view>
         </view>
@@ -71,108 +59,121 @@
     </view>
     <!-- 列表 -->
 
-    <view class="grow-1  min-h-0">
+    <view class="grow-1 min-h-0">
       <mc-uni
-      :fixed="false"
-      style="height: 100%"
-      @init="mescrollInit"
-      :up="upOptions"
-      :down="downOptions"
-      @down="downCallback"
-      @up="upCallback"
-    >
+        :fixed="false"
+        style="height: 100%"
+        @init="mescrollInit"
+        :up="upOptions"
+        :down="downOptions"
+        @down="downCallback"
+        @up="upCallback"
+      >
+        <view class="pl-4 pr-4 bg-#ffffff pt-4 pb-3 today-order-item" v-for="(v, index) in data">
+          <view class="flex justify-between mb-2 items-center">
+            <view class="flex">
+              <view class="w-168rpx"
+                ><text class="text-color-#606266 text-sm">订单编号：</text></view
+              >
+              <view
+                ><text class="text-sm">{{ v?.orderNumber }}</text></view
+              >
+            </view>
 
-
-    <view class="pl-4 pr-4 bg-#ffffff pt-4 pb-3 today-order-item" v-for="v in data">
-        <view class="flex justify-between mb-2 items-center">
-          <view class="flex">
-            <view class="w-168rpx"><text class="text-color-#606266 text-sm">订单编号：</text></view>
-            <view><text class="text-sm">YXB12926009</text></view>
+            <uni-icons :type="v.visible?'up':'down'" color="" size="16" @click="v.visible = !v.visible" />
           </view>
 
-          <uni-icons type="down" color="" size="16" />
-        </view>
-
-        <view class="mb-2">
-          <view class="flex">
-            <view class="w-168rpx"><text class="text-color-#606266 text-sm">订单类型：</text></view>
-            <view><text class="text-sm">ETC-货车</text></view>
-          </view>
-        </view>
-
-        <view class="flex justify-between items-center">
-          <view class="flex">
-            <view class="w-168rpx"><text class="text-color-#606266 text-sm">总金额：</text></view>
-            <view><text class="text-sm text-color-primary font-900">100元</text></view>
+          <view class="mb-2">
+            <view class="flex">
+              <view class="w-168rpx"
+                ><text class="text-color-#606266 text-sm">订单类型：</text></view
+              >
+              <view
+                ><text class="text-sm">{{ v.orderType }}</text></view
+              >
+            </view>
           </view>
 
-          <button class="cbtn" type="primary" size="mini" plain="none">详情</button>
+          <view class="flex justify-between items-center" v-if="v.visible" >
+            <view class="flex">
+              <view class="w-168rpx"><text class="text-color-#606266 text-sm">总金额：</text></view>
+              <view
+                ><text class="text-sm text-color-primary font-900"
+                  >{{ $tranNumber(v?.orderTotalPrice) }}元</text
+                ></view
+              >
+            </view>
+
+            
+          </view>
+
+          <view  class="flex justify-end items-center">
+            <button class="cbtn" type="primary" size="mini" plain @click="handleToDetail(v)">
+              详情
+            </button>
+          </view>
+
         </view>
-      </view>
-
-    </mc-uni>
-
-     
+      </mc-uni>
     </view>
   </view>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import dropDownScrollView from '@/components/drop-down-scroll-view/index.vue'
 import dropDownBox from '@/components/drop-down-scroll-view/drop-down-box.vue'
 
 import { sleep, useMescroll } from '@/composables'
-import { onLoad, onPageScroll, onReachBottom } from '@dcloudio/uni-app';
+import { onLoad, onPageScroll, onReachBottom } from '@dcloudio/uni-app'
 
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { getOrderinforList, orderTodayLiInfo } from '@/api'
+import { useOrderStore } from '@/stores'
+import moment from 'moment'
 
+const orderStore = useOrderStore()
 
-const options = [
-  {
-    label: '待支付',
-    value: '0',
-  },
-  {
-    label: '已支付',
-    value: '1',
-  },
-  {
-    label: '已完成',
-    value: '2',
-  },
-  {
-    label: '已退票',
-    value: '3',
-  },
- 
-]
-const options2 = [
-  {
-    label: 'ETC-货车',
-    value: '0',
-  },
-  {
-    label: '二轮车',
-    value: '1',
-  },
-  {
-    label: '三轮车',
-    value: '2',
-  },
-  {
-    label: '小轿车',
-    value: '3',
-  },
- 
-]
+const searchInput = ref({
+  orderState: -2,
+  orderType: '',
+  orderBuyTimeStart: moment().format('YYYY-MM-DD 00:00:00'),
+  orderBuyTimeEnd: moment().format('YYYY-MM-DD 23:59:59'),
+})
+
+onLoad(() => {
+  orderTodayLiInfo().then((res) => {
+    if (res?.result?.length > 0) {
+      const splitNum = Math.ceil(res?.result?.length / 2)
+      todayLiInfo.value[0] = res?.result?.slice(0, splitNum)
+      todayLiInfo.value[1] = res?.result?.slice(splitNum)
+    }
+  })
+
+  orderStore.getOrderTypeList()
+  orderStore.getOrderStateList()
+})
+
+// watch(searchInput, (v) => {
+//   console.log(v);
+
+// },{deep: true})
+
+const handleFinallySelect = (v: any) => {
+  downCallback(mescroll.value)
+}
+
+const handleToDetail = (v: any) => {
+  uni.navigateTo({
+    url: `/pages/order-detail/order-detail?orderNum=${v.orderNumber}`,
+  })
+}
+
+const todayLiInfo = ref([] as any)
 
 const { mescrollInit, getMescroll } = useMescroll(onPageScroll, onReachBottom) // 调用mescroll的hook
 
 const mescroll = computed(() => getMescroll()) as any // 必须使用计算属性才可及时获取到mescroll对象,此处是me-video中使用
 
-onLoad(() => {
-  console.log('页面 onload')
-})
 // 控制上拉加载的参数
 const upOptions = ref({
   use: true, // 是否启用上拉加载; 默认true
@@ -183,7 +184,7 @@ const upOptions = ref({
     size: 10, // 每页数据的数量
     time: null, // 加载第一页数据服务器返回的时间; 防止用户翻页时,后台新增了数据从而导致下一页数据重复;
   },
-  noMoreSize: 3,
+  noMoreSize: 5,
   textNoMore: '-- END --', // 没有更多数据的提示文本
   empty: {
     use: true, // 是否显示空布局
@@ -215,33 +216,31 @@ const downOptions = ref({
   textLoading: '加载中 ...', // 加载中的提示文本
 })
 
+const data = ref<any>([])
+const isUp = ref(true)
 
-const data = ref(0)
 // 上拉加载函数
-const upCallback = async (ms: any, page: any) => {
-  console.log('上拉加载')
+const upCallback = async (ms: any) => {
+  try {
+    const res = await getOrderinforList({
+      page: ms.optUp.page.num,
+      pageSize: ms.optUp.page.size,
+      ...searchInput.value,
+    })
 
-  await sleep(1000)
-  if (ms.optUp.page.num === 1) {
-    data.value = 10;
-    mescroll.value.endSuccess(10, true)
+    data.value = isUp.value ? res?.result?.items : data.value.concat(res?.result?.items || [])
+    mescroll.value.endSuccess(res?.result?.items?.length, res?.result?.totalPages)
 
-  } else {
-    data.value = 12;
-    mescroll.value.endSuccess(3, false)
+    isUp.value = false
+  } catch (_) {
+    ms.endErr()
   }
 }
 
 // 下拉刷新函数
 const downCallback = async (ms: any) => {
-  await sleep(2000)
-
-  console.log('下拉刷新', ms)
-
-  data.value =  2
-  // ms.endDownScroll()
-
-  ms.endSuccess(2)
+  isUp.value = true
+  ms?.resetUpScroll()
 }
 </script>
 

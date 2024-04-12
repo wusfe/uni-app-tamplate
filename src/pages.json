@@ -16,6 +16,13 @@
 			}
 		},
 		{
+			"path": "pages/anti-collision/anti-collision",
+			"style": {
+				"navigationBarTitleText": "防碰撞"
+			}
+		},
+		
+		{
 			"path": "pages/finance-statistics/finance-statistics",
 			"style": {
 				"navigationBarTitleText": "财务统计"
@@ -242,13 +249,7 @@
 					}
 				}
 			}
-		},
-		{
-			"path": "pages/index/index",
-			"style": {
-				"navigationBarTitleText": "uni-app"
-			}
-		},
+		}
 		
 	],
 	// 设置 TabBar

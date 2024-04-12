@@ -1,5 +1,5 @@
 {
-    "name" : "",
+    "name" : "v2-zhihui-app",
     "appid" : "__UNI__A0EEB11",
     "description" : "",
     "versionName" : "1.0.0",
@@ -17,7 +17,10 @@
             "delay" : 0
         },
         /* 模块配置 */
-        "modules" : {},
+        "modules" : {
+            "Maps" : {},
+            "Geolocation" : {}
+        },
         /* 应用发布信息 */
         "distribute" : {
             /* android打包配置 */
@@ -43,7 +46,23 @@
             /* ios打包配置 */
             "ios" : {},
             /* SDK配置 */
-            "sdkConfigs" : {}
+            "sdkConfigs" : {
+                "maps" : {
+                    "amap" : {
+                        "name" : "amapBU3OssFtC",
+                        "appkey_ios" : "42d0153e2ef0e46bcbbc520aec4fd11f",
+                        "appkey_android" : "42d0153e2ef0e46bcbbc520aec4fd11f"
+                    }
+                },
+                "geolocation" : {
+                    "amap" : {
+                        "name" : "amapBU3OssFtC",
+                        "__platform__" : [ "android" ],
+                        "appkey_ios" : "",
+                        "appkey_android" : "42d0153e2ef0e46bcbbc520aec4fd11f"
+                    }
+                }
+            }
         },
         "nvueLaunchMode" : ""
     },
@@ -69,5 +88,11 @@
     "uniStatistics" : {
         "enable" : false
     },
-    "vueVersion" : "3"
+    "vueVersion" : "3",
+    "h5" : {
+        "title" : "智慧轮渡",
+        "sdkConfigs" : {
+            "maps" : {}
+        }
+    }
 }

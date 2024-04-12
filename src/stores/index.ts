@@ -10,5 +10,8 @@ pinia.use(persist)
 export default pinia
 
 // 模块统一导出
-export * from './modules/d2'
-export * from './modules/d1'
+
+export * from './modules/user'
+export * from './modules/token'
+export * from './modules/order'
+export * from './modules/dict'

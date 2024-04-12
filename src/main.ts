@@ -6,13 +6,17 @@ import pinia from './stores'
 
 import 'virtual:uno.css'
 
+import { tranNumber } from './utils'
+
 // import VConsole from 'vconsole';
 
 // const vConsole = new VConsole();
-import mescrollBody from "mescroll-uni/mescroll-body.vue";
-export function createApp() {
-  const app = createSSRApp(App)
 
+export function createApp() {
+  const app = createSSRApp(App);
+
+  app.config.globalProperties.$tranNumber = tranNumber;
+  
   // 使用 pinia
   app.use(pinia)
   app

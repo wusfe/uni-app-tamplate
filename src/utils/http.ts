@@ -10,9 +10,9 @@
  *   4. 添加 token 请求头标识
  */
 
-// import { useMemberStore } from '@/stores'
+import { useTokenStore } from '@/stores'
 
-const baseURL = 'https://pcapi-xiaotuxian-front-devtest.itheima.net'
+const baseURL = 'https://data.njzlskj.com'
 
 // 添加拦截器
 const httpInterceptor = {
@@ -25,16 +25,17 @@ const httpInterceptor = {
     // 2. 请求超时, 默认 60s
     options.timeout = 10000
     // 3. 添加小程序端请求头标识
+    
+    // 这里必须这样
     options.header = {
-      ...options.header,
-      'source-client': 'miniapp',
+      ...options.header
     }
     // 4. 添加 token 请求头标识
-    // const memberStore = useMemberStore()
-    // const token = memberStore.profile?.token
-    const token = ''
+    const memberStore = useTokenStore()
+    const token = memberStore.token?.accessToken
+   
     if (token) {
-      options.header.Authorization = token
+      options.header.Authorization = `Bearer ${token}`
     }
   },
 }
@@ -55,8 +56,8 @@ uni.addInterceptor('uploadFile', httpInterceptor)
  *    3.3 网络错误 -> 提示用户换网络
  */
 type Data<T> = {
-  code: string
-  msg: string
+  code: number
+  message: string
   result: T
 }
 // 2.2 添加类型，支持泛型
@@ -67,21 +68,42 @@ export const http = <T>(options: UniApp.RequestOptions) => {
       ...options,
       // 响应成功
       success(res) {
+        // console.log(res);
+        const { code } = res.data as Data<T>
         // 状态码 2xx， axios 就是这样设计的
         if (res.statusCode >= 200 && res.statusCode < 300) {
+
+          if(code !== 200){
+            uni.showToast({
+              icon: 'none',
+              title: (res.data as Data<T>).message || '请求错误',
+            })
+
+            if(code === 403) {
+              const tokenStore = useTokenStore()
+              tokenStore.clearToken()
+              uni.navigateTo({ url: '/pages/login/login' })
+            }
+            reject(res)
+          
+            
+            
+          }else {
+            resolve(res.data as Data<T>)
+          }
           // 2.1 提取核心数据 res.data
-          resolve(res.data as Data<T>)
+         
         } else if (res.statusCode === 401) {
           // 401错误  -> 清理用户信息，跳转到登录页
-          // const memberStore = useMemberStore()
-          // memberStore.clearProfile()
+          const tokenStore = useTokenStore()
+          tokenStore.clearToken()
           uni.navigateTo({ url: '/pages/login/login' })
           reject(res)
         } else {
           // 其他错误 -> 根据后端错误信息轻提示
           uni.showToast({
             icon: 'none',
-            title: (res.data as Data<T>).msg || '请求错误',
+            title: (res.data as Data<T>).message || '请求错误',
           })
           reject(res)
         }

@@ -1,17 +1,24 @@
 <template>
   <view class="drop-down-scroll-view">
-
-
-    <view  @tap.stop="showModal" class="flex justify-between items-center pt-3 pb-3 drop-menu-item">
-      <text v-if="!label" class="mr-1 text-sm" :style="{color:isShowModal?'#007aff':'#333333'}">{{ this.placeholder }}</text>
-      <text v-if="label" class="mr-1 text-sm" :style="{ color:isShowModal?'#007aff':'#333333'}">{{ label }}</text>
+    <view @tap.stop="showModal" class="flex justify-between items-center pt-3 pb-3 drop-menu-item">
+      <text
+        v-if="!label"
+        class="mr-1 text-sm"
+        :style="{ color: isShowModal ? '#007aff' : '#333333' }"
+        >{{ this.placeholder }}</text
+      >
+      <text
+        v-if="label"
+        class="mr-1 text-sm"
+        :style="{ color: isShowModal ? '#007aff' : '#333333' }"
+        >{{ label }}</text
+      >
 
       <uni-icons
-        :type="isShowModal?'up':'down'"
-        :color="isShowModal?'#007aff':'#333333'"
+        :type="isShowModal ? 'up' : 'down'"
+        :color="isShowModal ? '#007aff' : '#333333'"
         size="18"
       />
-     
 
       <!-- <input
           v-model="_value"
@@ -25,7 +32,6 @@
       <!-- <image src="@/static/right_icon.png" class="selector-icon"></image> -->
     </view>
 
-   
     <view v-if="isShowModal" class="drop-down-popup">
       <view>
         <!-- <view class="title-main">
@@ -88,13 +94,17 @@ export default {
       temlateValue: '',
     }
   },
+  // model:{
+  //   prop: 'value',
+  //   event: 'input'
+  // },
   props: {
     showSearch: {
       // 是否显示搜索框
       type: Boolean,
-      default: true,
+      default: false,
     },
-    value: {
+    modelValue: {
       type: [Number, String, Array, Object],
       default: null,
     },
@@ -119,7 +129,7 @@ export default {
     },
     labelKey: {
       // 指定list中labelKey的值作为下拉框显示内容
-      default: 'label',
+      default: 'lable',
       type: String,
     },
     disabled: {
@@ -169,6 +179,9 @@ export default {
     showArrow: {
       type: Boolean,
       default: true,
+    },
+    defaultValue: {
+      any: true,
     },
   },
   emits: ['openDeepScroll', 'closeDeepScroll', 'input', 'change'],
@@ -263,16 +276,16 @@ export default {
     empty() {
       // 清空
       this.temlateValue = []
-      this._value = ''
-      if (this.multiple) {
-        this.$emit('change', [])
-        this.$emit('input', [])
-      } else {
-        this.$emit('change', '')
-        this.$emit('input', '')
-      }
+
+      this._value = []
+
+      this.$emit('update:modelValue', this.defaultValue)
+
+      this.$emit('change', this.defaultValue || (this.multiple ? [] : ''))
+
+      this.$emit('finally', this.defaultValue || (this.multiple ? [] : ''))
+
       this.hideModal()
-      
 
       this.provideMask && this.provideMask(false)
     },
@@ -281,28 +294,34 @@ export default {
     //   this.$emit('cancel', this._value)
     //   this.hideModal()
     // },
+
     confirmClick() {
       // 点击确定
+
+      let v = ''
       if (this.valueType === 'all') {
-        this.$emit('confirm', this.options)
+        v = this.options
       } else {
-        this.$emit('confirm', this._value)
+        v = !this.multiple ? this.temlateValue[0] : this.temlateValue
       }
 
-      this._value = this.temlateValue;
+      this._value = this.temlateValue
+      this.$emit('update:modelValue', v)
+
+      this.$emit('confirm', v)
+      this.$emit('finally', v)
+
       this.hideModal()
-      
 
       this.provideMask && this.provideMask(false)
     },
     showModal() {
-      this.isShowModal = !this.isShowModal;
-        // 打开禁止穿透滚动
+      this.isShowModal = !this.isShowModal
+      // 打开禁止穿透滚动
       // this.$emit('openDeepScroll');
-      
+
       this.provideHidePup && this.provideHidePup(this)
 
-     
       this.provideMask && this.provideMask(this.isShowModal)
     },
     hideModal() {
@@ -311,15 +330,14 @@ export default {
       this.temlateValue = this._value
       this.searchInput = ''
       // 关闭禁止穿透滚动
-    
     },
-    discard(){}
+    discard() {},
   },
   watch: {
     searchInput(val) {
       if (!this.$props.showSearchBtn) this.$emit('search', val)
     },
-    value: {
+    modelValue: {
       handler(nValue, value) {
         let currentValue = ''
         if (Array.isArray(nValue)) {
@@ -341,8 +359,6 @@ export default {
   padding: 20rpx 0;
 }
 
-
-
 .selectIcon {
   font-family: 'selectIcon' !important;
   font-size: 16px;
@@ -352,40 +368,36 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-
-
 .bg-white {
   background-color: #ffffff;
 }
 
-
-
 .select-content {
-    // background-color: #F1F1F1;
-    max-height: 50vh;
-    .select-item {
-      text-align: left;
-      padding: 24rpx 40rpx;
-      display: flex;
-      align-items: center;
-      position: relative;
-      ::after {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        left: 0;
-        height: 1px;
-        content: '';
-        -webkit-transform: scaleY(0.5);
-        transform: scaleY(0.5);
-        background-color: #e5e5e5;
-      }
+  // background-color: #F1F1F1;
+  max-height: 50vh;
+  .select-item {
+    text-align: left;
+    padding: 24rpx 40rpx;
+    display: flex;
+    align-items: center;
+    position: relative;
+    ::after {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      height: 1px;
+      content: '';
+      -webkit-transform: scaleY(0.5);
+      transform: scaleY(0.5);
+      background-color: #e5e5e5;
+    }
 
-      .title {
-        flex: 1;
-      }
+    .title {
+      flex: 1;
     }
   }
+}
 
 .select-bar {
   margin-top: 20rpx;
@@ -427,11 +439,9 @@ export default {
   padding-left: 30rpx;
 }
 
-.drop-down-scroll-view{
-  
-		
+.drop-down-scroll-view {
 }
-.drop-down-popup{
+.drop-down-popup {
   position: absolute;
   width: 100%;
   left: 0;
@@ -440,6 +450,4 @@ export default {
   z-index: 998;
   top: 100%;
 }
-
-
 </style>

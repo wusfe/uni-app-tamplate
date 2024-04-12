@@ -36,7 +36,6 @@ export function useMescroll(onPageScroll, onReachBottom, onPullDownRefresh){
 	const upCallback = ()=> {
 		// mixin默认延时500自动结束加载
 		setTimeout(()=>{
-			console.log(22222333);
 			mescroll.endErr();
 		}, 500)
 	}

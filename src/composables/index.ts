@@ -18,8 +18,6 @@ export const useGetBarHeight = () => {
   const bottomHeightRef = ref(0);
   onLoad( async () => {
     // await seelp(5000)
-  console.log('hook');
-  
    const data = uni.getSystemInfoSync() as any;
 
    topHeightRef.value = data?.statusBarHeight as any;

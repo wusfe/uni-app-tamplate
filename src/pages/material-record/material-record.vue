@@ -215,11 +215,7 @@ const downCallback = async (ms: any) => {
     background-color: #e5e5e5;
   }
 }
-.nav-item {
-  :deep {
-    .drop-menu-item {
-      justify-content: center !important;
-    }
-  }
+.nav-item :deep(.drop-menu-item){
+  justify-content: center !important;
 }
 </style>

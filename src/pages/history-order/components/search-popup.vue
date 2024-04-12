@@ -7,76 +7,50 @@
       @change="change"
       class="search-popup-wrap"
     >
-      <view class="pl-2 pr-2 pt-2 w-400rpx " >
+      <view class="pl-2 pr-2 pt-0 w-400rpx " >
         <uni-forms label-position="top" class="popup-form">
           <uni-forms-item label="订单类型" class="popup-form-item">
-            <uni-data-select placeholder="请选择订单类型" @change="change"></uni-data-select>
+            <uni-data-select  v-model="selfSearchInput.orderType"  placeholder="请选择订单类型" :localdata="typeList" @change="change"></uni-data-select>
           </uni-forms-item>
-          <uni-forms-item label="订单状态" class="popup-form-item">
+          <uni-forms-item label="订单状态"   class="popup-form-item">
             <uni-data-select
+            v-model="selfSearchInput.orderState"
               placeholder="请选择订单状态"
-              :localdata="options"
+              :localdata="stateList"
               @change="change"
             ></uni-data-select>
           </uni-forms-item>
 
           <uni-forms-item label="车辆类型" class="popup-form-item">
             <uni-data-select
+            v-model="selfSearchInput.orderCarType" 
               placeholder="请选择车辆类型"
-              :localdata="options"
+              :localdata="carTypeList"
               @change="change"
             ></uni-data-select>
           </uni-forms-item>
 
           <uni-forms-item label="收费类型" class="popup-form-item">
             <uni-data-select
+            v-model="selfSearchInput.orderChargeType" 
               placeholder="请选择收费类型"
-              :localdata="options"
+              :localdata="chargeTypeList"
               @change="change"
             ></uni-data-select>
           </uni-forms-item>
 
           <uni-forms-item label="车牌号" class="popup-form-item">
-            <uni-easyinput placeholder="请输入车牌号"></uni-easyinput>
+            <uni-easyinput v-model="selfSearchInput.orderCarNumber" placeholder="请输入车牌号"></uni-easyinput>
           </uni-forms-item>
 
           <uni-forms-item label="订单编号" class="popup-form-item">
-            <uni-data-select
-              placeholder="请输入订单编号"
-              :localdata="options"
-              @change="change"
-            ></uni-data-select>
+            <uni-easyinput v-model="selfSearchInput.orderNumber" placeholder="请输入订单编号"></uni-easyinput>
+            
           </uni-forms-item>
 
-          <uni-forms-item label="订单编号" class="popup-form-item">
-            <uni-data-select
-              placeholder="请输入订单编号"
-              :localdata="options"
-              @change="change"
-            ></uni-data-select>
-          </uni-forms-item>
 
-          <uni-forms-item label="订单编号" class="popup-form-item">
-            <uni-data-select
-              placeholder="请输入订单编号"
-              :localdata="options"
-              @change="change"
-            ></uni-data-select>
-          </uni-forms-item>
 
-          <uni-forms-item label="订单编号" class="popup-form-item">
-            <uni-data-select
-              placeholder="请输入订单编号"
-              :localdata="options"
-              @change="change"
-            ></uni-data-select>
-          </uni-forms-item>
-
-          <uni-forms-item label="车牌号" class="popup-form-item">
-            <uni-easyinput placeholder="请输入车牌号"></uni-easyinput>
-          </uni-forms-item>
-
-          <button type="primary" plain size="mini" class="block w-100% mt-4">提交</button>
+          <button type="primary" plain size="mini" class="block w-100% mt-4" @click="handleSubmit">提交</button>
         </uni-forms>
       </view>
     </popupWrap>
@@ -85,35 +59,83 @@
 
 <script setup lang="ts">
 import popupWrap from '@/components/popup/index.vue'
+import { useDictStore, useOrderStore } from '@/stores';
 import { onLoad, onReady } from '@dcloudio/uni-app'
-import { ref } from 'vue'
+
+import { ref ,watch, computed, unref} from 'vue'
+const orderStore = useOrderStore();
+const dictStore = useDictStore();
+onLoad(() => {
+  orderStore.getOrderTypeList()
+  orderStore.getOrderStateList()
+  dictStore.getCarTypeList()
+  dictStore.getChargeTypeList()
+})
+
+const props = defineProps(['searchInput']) 
+const emit = defineEmits(['confirm']) 
+
+const selfSearchInput = ref<any>({}) 
+
+watch(props.searchInput, (v) => {
+
+  selfSearchInput.value = JSON.parse(JSON.stringify(unref(v)))
+  
+}, {deep:true, immediate:true})
+
+
+const typeList = computed(() => {
+  return orderStore.orderTypeList?.map((item:any) => ({
+    text: item.lable,
+    value: item.value
+  }))
+})
+
+
+const stateList = computed(() => {
+  return orderStore.orderStateList?.map((item:any) => ({
+    text: item.lable,
+    value: item.value
+  }))
+})
+
+const carTypeList = computed(() => {
+  return dictStore.carType?.map((item:any) => ({
+    text: item.value,
+    value: item.code
+  }))
+})
+
+const chargeTypeList = computed(() => {
+  return dictStore.chargeType?.map((item:any) => ({
+    text: item.value,
+    value: item.code
+  }))
+})
+
 
 const popup = ref()
 
-const handleOpen = () => {
+const open = () => {
   popup.value.open(true)
+
+  selfSearchInput.value = JSON.parse(JSON.stringify(unref(props.searchInput)))
 }
 
-const options = [
-  {
-    text: '待支付',
-    value: '0',
-  },
-  {
-    text: '已支付',
-    value: '1',
-  },
-  {
-    text: '已完成',
-    value: '2',
-  },
-  {
-    text: '已退票',
-    value: '3',
-  },
-]
+
+const close = () => {
+  popup.value.close()
+}
+
+const handleSubmit = () => {
+  
+  emit('confirm', selfSearchInput)
+}
+
+
 defineExpose({
-  handleOpen,
+  open,
+  close
 })
 
 const change = () => {}

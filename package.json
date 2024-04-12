@@ -56,8 +56,10 @@
     "@dcloudio/uni-ui": "^1.4.23",
     "@uni-helper/unocss-preset-uni": "^0.2.7",
     "mescroll-uni": "^1.3.7",
+    "moment": "^2.30.1",
     "pinia": "2.0.27",
     "pinia-plugin-persistedstate": "^3.2.0",
+    "sm-crypto-v2": "^1.9.0",
     "unocss": "^0.58.8",
     "vue": "^3.4.21",
     "vue-i18n": "^9.10.2"

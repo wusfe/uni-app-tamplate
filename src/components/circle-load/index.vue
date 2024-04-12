@@ -4,13 +4,16 @@
       <image class="outer-image" src="/static/v2_circle.jpg" mode="aspectFill"></image>
 
       <view class="inner">
-        <image class="inner-image" src="/static/v2_loading.jpg" mode="aspectFill"></image>
+        <image class="inner-image" :src="innerUrl || '/static/v2_loading.jpg'" mode="aspectFill"></image>
       </view>
     </view>
   </view>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+defineProps(['innerUrl'])
+
+</script>
 
 <style scoped>
 .outer {
