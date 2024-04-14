@@ -127,7 +127,6 @@ import { getNewsNotice, getNumberTask, getUnReadList, getTodayColorAll } from '@
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 
-
 import permision from '@/utils/permission'
 // 报错
 // import NavigationBar from "@/components/navigation-bar"
@@ -155,11 +154,13 @@ const menu = [
     icon: <i class="zhfont zh-tiaodu1 text-color-white"></i>,
     bg: '#C465E2',
     text: '调度',
+    url: '/pages/dispatch-manage/dispatch-manage'
   },
   {
     icon: <i class="zhfont zh-cangkuguanli text-color-white"></i>,
     bg: '#5756D7',
     text: '仓库管理',
+    url: '/pages/store-manage/store-manage',
   },
   {
     icon: <i class="zhfont zh-shipinjiankong text-color-white"></i>,
@@ -170,11 +171,15 @@ const menu = [
     icon: <i class="zhfont zh-caiwuguanli text-color-white"></i>,
     bg: '#5AC8FA',
     text: '财务管理',
+    // url: '/pages/finance-manage/finance-manage'
+    url: '/pages/finance-statistics/finance-statistics'
   },
   {
     icon: <i class="zhfont zh-gerencheyuan text-color-white"></i>,
     bg: '#FF2D55',
     text: '计人计车',
+    // url: '/pages/steamer-arrival/steamer-arrival'
+    url: '/pages/mancar-manage/mancar-manage'
   },
   {
     icon: <i class="zhfont zh-dingdantongji text-color-white"></i>,
@@ -184,7 +189,7 @@ const menu = [
   {
     icon: <i class="zhfont zh-fangpengzhuang text-color-white"></i>,
     bg: '#2585EE',
-    text: '仿碰撞',
+    text: '防碰撞',
   },
   {
     icon: <i class="zhfont zh-n text-color-white"></i>,
@@ -228,8 +233,9 @@ const unReadFn = async () => {
 }
 const noticeFn = async () => {
   const res = await getNewsNotice()
-  var pattern = /<[^>]+>|style="[^"]+"/g
-  notice.value = res?.result?.content?.replace(pattern, '')
+  notice.value = res?.result.title || ''
+  // var pattern = /<[^>]+>|style="[^"]+"/g
+  // notice.value = res?.result?.content?.replace(pattern, '')
 }
 
 const taskNumFn = async () => {
@@ -247,11 +253,13 @@ const handleNavigateTo = (url: string) => {
 
 // 扫码
 const handleScanCode = async () => {
-  const result = await permision.requestAndroidPermission('android.permission.CAMERA')
-  if (result == -1) {
+  const result = await permision.requestAndroidPermission('android.permission.READ_EXTERNAL_STORAGE')
+
+ 
+  if (result === -1) {
     uni.showModal({
-      title: '照相机权限申请',
-      content: '是否允许开启设备照相功能？',
+      title: '相册读取权限申请',
+      content: '是否允许开启相册读取功能？',
       success: (res) => {
         if (res.confirm) {
           permision.gotoAppPermissionSetting()
@@ -259,17 +267,19 @@ const handleScanCode = async () => {
       },
     })
   } else {
-   
-  uni.scanCode({
-    success: function (res) {
-      console.log('条码类型：' + res.scanType)
-      console.log('条码内容：' + res.result)
-    },
-  })
-  }
-  
+    uni.scanCode({
+      success: function (res) {
+        console.log(res, 'res....');
+        
+        console.log('条码类型：' + res.scanType)
+        console.log('条码内容：' + res.result)
 
-  
+        uni.navigateTo({
+          url: `/pages/qr-result/qr-result?orderNumber=${res}`
+        })
+      },
+    })
+  }
 }
 
 onLoad(async () => {

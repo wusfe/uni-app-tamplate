@@ -37,9 +37,24 @@ export const getOrderStateList = (data?: any) => {
 }
 
 
-// 获取订单表
+// 获取订单详情
 export const orderinforDetail= async (data?:any) => http<any>({
   url: "/api/orderinfor/detail",
   method: 'GET',
   data
 })
+
+
+// 扫描二维码
+export const updateCompleteOrder= async (orderNumber:number) => http<any>({
+  url: `/api/orderinfor/updateComplete/${orderNumber}`,
+  method: 'POST',
+  
+})
+// 财务统计
+export const orderBydateList= async (dt:any) => http<any>({
+  url: `/api/orderinfor/orderBydateList/${dt}`,
+  method: 'GET',
+ 
+})
+

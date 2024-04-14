@@ -1,3 +1,11 @@
+const  orderErlun =  "/static/order-erlun.png";
+const  orderSanlun  =  "/static/order-sanlun.png";
+const orderJiaoche = "/static/order-jiaoche.png";
+const etczf = "/static/etczf.png";
+const cash = "/static/cash.png";
+const moveCash = "/static/move-cash.png";
+const orderSanke = "/static/order-sanke.png";
+
 export const ORDERSTATUSTEXT:any = {
   0: '待付款',
   1: '已付款',
@@ -25,3 +33,14 @@ export const ORDERCHARGETYPELIST  = [
     value: 4
   }
 ]
+
+
+export const ORDER_COMMONICON = {
+  "散客": orderSanke,
+  "二轮车": orderErlun,
+  "三轮车": orderSanlun,
+  "轿车":orderJiaoche,
+  "现金": cash,
+  "移动": moveCash,
+  "ETC": etczf
+};

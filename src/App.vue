@@ -130,9 +130,11 @@ uni-button[size='mini'] {
 }
 
 .pric {
-  color: #007aff;
+  color: $uni-color-primary;
 }
-
+.scolor{
+  color: $uni-color-success;
+}
 .text-danger{
   color: $uni-color-error;
 }

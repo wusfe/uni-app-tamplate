@@ -7,50 +7,41 @@
       @down="downCallback"
       @up="upCallback"
     >
-      <uni-swipe-action>
-        <view class="pl-2 pr-2 mt-3" v-for="v in data" :key="v.id">
+    <view class="pl-2 pr-2 mt-3" v-for="v in data" :key="v.id" @click="handleToDetail(v)">
           <uni-card :is-shadow="false" :margin="'0'" :spacing="'0'" :padding="'0'">
-            <uni-swipe-action-item>
-              <view class="pt-2 pb-2 pl-3 pr-3">
+            <view class="pt-2 pb-2 pl-3 pr-3">
                 <view
                   ><text class="text-color-#000000"
-                    >市政府办公室关于转发《国务院办公厅关于2019年部分节假日安排的通知》的通知</text
+                    >{{ v?.sysNotice?.title }}</text
                   ></view
                 >
 
                 <view class="flex flex-row justify-end items-center">
-                  <text class="mr-3">杨静云</text>
-                  <text>发布于 2022-10-20 15:00</text>
+                  <text class="mr-3">{{ v?.sysNotice?.publicUserName }}</text>
+                  <text>发布于 {{ v?.sysNotice?.publicTime }}</text>
                 </view>
               </view>
-              <template v-slot:right>
-                <view class="px-4 bg-red flex justify-center items-center"
-                  ><text class="text-color-#ffffff">删除</text></view
-                >
-              </template>
-            </uni-swipe-action-item>
           </uni-card>
         </view>
-      </uni-swipe-action>
     </mc-body>
   </view>
 </template>
 
 <script setup lang="tsx">
-import { useGetBarHeight, sleep, useMescroll } from '@/composables'
-import { onReady, onLoad, onPageScroll, onReachBottom } from '@dcloudio/uni-app'
+import { pageReceived, sysNoticeDelete } from '@/api';
+import {  useMescroll } from '@/composables'
+import { onNavigationBarButtonTap, onPageScroll, onReachBottom } from '@dcloudio/uni-app'
 import { computed, ref } from 'vue'
+
+const searchInput = ref({
+  type: 2
+})
 
 const { mescrollInit, getMescroll } = useMescroll(onPageScroll, onReachBottom) // 调用mescroll的hook
 
 const mescroll = computed(() => getMescroll()) as any // 必须使用计算属性才可及时获取到mescroll对象,此处是me-video中使用
 
-const z = useGetBarHeight()
 
-
-onLoad(() => {
-  console.log('页面 onload')
-})
 // 控制上拉加载的参数
 const upOptions = ref({
   use: true, // 是否启用上拉加载; 默认true
@@ -61,13 +52,13 @@ const upOptions = ref({
     size: 10, // 每页数据的数量
     time: null, // 加载第一页数据服务器返回的时间; 防止用户翻页时,后台新增了数据从而导致下一页数据重复;
   },
-  noMoreSize: 3,
+  noMoreSize: 5,
   textNoMore: '-- END --', // 没有更多数据的提示文本
   empty: {
     use: true, // 是否显示空布局
     icon: 'https://www.mescroll.com/img/mescroll-empty.png', // 图标路径
     tip: '~ 暂无相关数据 ~', // 提示
-    btnText: '去逛逛 >', // 按钮
+    // btnText: '去逛逛 >', // 按钮
     fixed: false, // 是否使用fixed定位,默认false; 配置fixed为true,以下的top和zIndex才生效 (transform会使fixed失效,最终会降级为absolute)
     top: '100rpx', // fixed定位的top值 (完整的单位值,如 "10%"; "100rpx")
     zIndex: 99, // fixed定位z-index值
@@ -76,6 +67,7 @@ const upOptions = ref({
 
 // 控制下拉刷新
 const downOptions = ref({
+  top: 0,
   use: true, // 是否启用下拉刷新; 默认true
   auto: false, // 是否在初始化完毕之后自动执行下拉刷新的回调; 默认true
   autoShowLoading: true, // 如果设置auto=true(在初始化完毕之后自动执行下拉刷新的回调),那么是否显示下拉刷新的进度; 默认false
@@ -92,52 +84,68 @@ const downOptions = ref({
   textLoading: '加载中 ...', // 加载中的提示文本
 })
 
+const data = ref<any>([])
+
+const isUp = ref(true)
+
 // 上拉加载函数
-const upCallback = async (ms: any, page: any) => {
-  console.log('上拉加载')
+const upCallback = async (ms: any) => {
+  try {
+    const res = await pageReceived({
+      page: ms.optUp.page.num,
+      pageSize: ms.optUp.page.size,
+      ...searchInput.value,
+    })
 
-  await sleep(1000)
-  if (ms.optUp.page.num === 1) {
-    
-    
-    const arr = []
-    for (let index = 0; index < 50; index++) {
-      arr.push({
-        id: Date.now(),
-        label: index + '---title',
-        value: index,
-      })
-    }
-    data.value = arr;
-    
-    mescroll.value.endSuccess(10, true)
+    data.value = isUp.value ? res?.result?.items : data.value.concat(res?.result?.items || [])
+    mescroll.value.endSuccess(res?.result?.items?.length, res?.result?.totalPages)
 
-  } else {
-    data.value = data.value.concat([
-      {
-        id: Date.now(),
-        label: 100 + '---title',
-        value: 100,
-      },
-    ])
-    mescroll.value.endSuccess(3, false)
+    isUp.value = false
+  } catch (_) {
+    ms.endErr()
   }
 }
 
 // 下拉刷新函数
 const downCallback = async (ms: any) => {
-  await sleep(2000)
-
-  console.log('下拉刷新', ms)
-
-  // ms.endDownScroll()
-
-  // ms.endSuccess(100)
+  isUp.value = true
+  ms?.resetUpScroll()
 }
-const data = ref([] as any)
 
-onLoad(() => {
-  console.log('页面 onReady')
+
+const getContent =  (str:string = '') => {
+  var pattern = /<[^>]+>|style="[^"]+"/g
+  return str?.replace(pattern, '')
+}
+
+const handleDelete = (v:any) => {
+  console.log(v);
+
+  uni.showModal({
+    title:'是否确认删除',
+    success(c){
+      console.log(c);
+      if(c?.confirm){
+        sysNoticeDelete({
+          id: v.id
+        }).then(res => {
+          uni.showToast({
+            title:'删除成功'
+          })
+        })
+      }
+    }
+  })
+  return false
+}
+
+const handleToDetail = (v:any) => {
+  uni.navigateTo({ url: `/pages/notice-detail/notice-detail?id=${v.noticeId}` })
+}
+
+onNavigationBarButtonTap(() => {
+ 
+ uni.navigateTo({ url: '/pages/notice-add/notice-add' })
 })
 </script>
 

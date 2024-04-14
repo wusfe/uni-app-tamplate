@@ -7,8 +7,12 @@ export const useDictStore = defineStore('dict', {
   state: () => ({
     carType:[],
     chargeType: [],
+    goodtype: [],
+    taskType: [],
     loading: false,
-    loading2: false
+    loading2: false,
+    loading3: false,
+    loading4: false
   }),
   actions: {
     
@@ -31,6 +35,21 @@ export const useDictStore = defineStore('dict', {
       this.chargeType = res?.result || []
       this.loading2 = false
     },
-
+    async getGoodtype() {
+      if(this.loading3) return
+      if(this.goodtype?.length > 0) return;
+      this.loading3 = true
+      let res = await getTypeDict({code:'goodtype'});
+      this.goodtype = res?.result || []
+      this.loading3 = false
+    },
+    async getTaskType() {
+      if(this.loading4) return
+      if(this.taskType?.length > 0) return;
+      this.loading4 = true
+      let res = await getTypeDict({code:'tasktype'});
+      this.taskType = res?.result || []
+      this.loading4 = false
+    },
   },
 })

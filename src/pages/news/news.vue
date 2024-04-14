@@ -8,14 +8,14 @@
       @up="upCallback"
     >
 
-    <view class=" pt-4 pb-4 pl-4 pr-4 flex justify-between items-center bg-#ffffff b1" v-for="v in data">
+    <view class=" pt-4 pb-4 pl-4 pr-4 flex justify-between items-center bg-#ffffff b1" v-for="v in data" @click="handleToDetail(v)">
      
       <view class="mr-2 grow-1 e1">
         <text class="whitespace-nowrap ">您有新的任务了请及时查看</text>
       </view>
 
       <view class="shrink-0">
-        <text class="">未读</text>
+        <text :class="{ 'text-danger': v?.readStatus === 0, scolor:v?.readStatus===1 }">{{ v?.readStatus === 0?'未读':'已读' }}</text>
       </view>
 
     </view>
@@ -30,14 +30,17 @@
 import { onLoad, onPageScroll, onReachBottom } from '@dcloudio/uni-app';
 import {sleep, useMescroll} from "@/composables"
 import { computed, ref } from 'vue';
+import { pageReceived ,sysNoticeSetRead} from '@/api';
+
+const searchInput = ref({
+  type: 1
+})
 
 const { mescrollInit, getMescroll } = useMescroll(onPageScroll, onReachBottom) // 调用mescroll的hook
 
 const mescroll = computed(() => getMescroll()) as any // 必须使用计算属性才可及时获取到mescroll对象,此处是me-video中使用
 
-onLoad(() => {
-  console.log('页面 onload')
-})
+
 // 控制上拉加载的参数
 const upOptions = ref({
   use: true, // 是否启用上拉加载; 默认true
@@ -48,13 +51,13 @@ const upOptions = ref({
     size: 10, // 每页数据的数量
     time: null, // 加载第一页数据服务器返回的时间; 防止用户翻页时,后台新增了数据从而导致下一页数据重复;
   },
-  noMoreSize: 3,
+  noMoreSize: 5,
   textNoMore: '-- END --', // 没有更多数据的提示文本
   empty: {
     use: true, // 是否显示空布局
     icon: 'https://www.mescroll.com/img/mescroll-empty.png', // 图标路径
     tip: '~ 暂无相关数据 ~', // 提示
-    btnText: '去逛逛 >', // 按钮
+    // btnText: '去逛逛 >', // 按钮
     fixed: false, // 是否使用fixed定位,默认false; 配置fixed为true,以下的top和zIndex才生效 (transform会使fixed失效,最终会降级为absolute)
     top: '100rpx', // fixed定位的top值 (完整的单位值,如 "10%"; "100rpx")
     zIndex: 99, // fixed定位z-index值
@@ -80,36 +83,42 @@ const downOptions = ref({
   textLoading: '加载中 ...', // 加载中的提示文本
 })
 
+const data = ref<any>([])
 
-const data = ref(0)
+const isUp = ref(true)
+
 // 上拉加载函数
-const upCallback = async (ms: any, page: any) => {
-  console.log('上拉加载')
+const upCallback = async (ms: any) => {
+  try {
+    const res = await pageReceived({
+      page: ms.optUp.page.num,
+      pageSize: ms.optUp.page.size,
+      ...searchInput.value,
+    })
 
-  await sleep(1000)
-  if (ms.optUp.page.num === 1) {
-    
-    
-   
-    data.value = 20;
-    mescroll.value.endSuccess(10, true)
+    data.value = isUp.value ? res?.result?.items : data.value.concat(res?.result?.items || [])
+    mescroll.value.endSuccess(res?.result?.items?.length, res?.result?.totalPages)
 
-  } else {
-    data.value = 22;
-    mescroll.value.endSuccess(3, false)
+    isUp.value = false
+  } catch (_) {
+    ms.endErr()
   }
 }
 
 // 下拉刷新函数
 const downCallback = async (ms: any) => {
-  await sleep(2000)
+  isUp.value = true
+  ms?.resetUpScroll()
+}
 
-  console.log('下拉刷新', ms)
+const handleToDetail = (v:any) => {
 
-  data.value =  2
-  // ms.endDownScroll()
-
-  ms.endSuccess(2, false)
+  if(v?.readStatus	 === 0){
+    sysNoticeSetRead({
+      id: v.noticeId
+    })
+  }
+  uni.navigateTo({ url: `/pages/notice-detail/notice-detail?id=${v.noticeId}` })
 }
 
 </script>

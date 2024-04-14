@@ -86,7 +86,7 @@
       </view>
 
       <view
-        v-if="!insert && !range && hasTime"
+        v-if="!insert && !range"
         class="uni-date-changed uni-calendar--fixed-top"
         style="padding: 0 80px"
       >
@@ -94,6 +94,7 @@
           tempSingleDate ? tempSingleDate : selectDateText
         }}</view>
         <time-picker
+          v-if="hasTime"
           type="time"
           :start="timepickerStartTime"
           :end="timepickerEndTime"
@@ -145,7 +146,7 @@
       </view>
 
       <view v-if="!insert" class="uni-date-changed uni-date-btn--ok">
-		<button type="primary" siez="mini" :disabled="!tempRange.before || !tempRange.after"  @click="confirm">{{ confirmText }}</button>
+		<button type="primary" siez="mini" :disabled="(range && (!tempRange.before || !tempRange.after)) || (!range && !calendar.fullDate)"  @click="confirm">{{ confirmText }}</button>
 		<button class="mt-3" type="primary"  siez="mini" plain @click="handleReset">{{ '重置' }}</button>
         <!-- <view class="uni-datetime-picker--btn" @click="confirm">{{ confirmText }}</view> -->
         <!-- <view class="uni-datetime-picker--btn mt-3" @click="handleReset">{{ '重置' }}</view> -->

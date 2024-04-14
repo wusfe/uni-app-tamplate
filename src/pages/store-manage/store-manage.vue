@@ -6,18 +6,18 @@
       <dropDownBox class="pt-3">
         <template v-slot:top>
           <view class="pl-4 pr-4 mb-1">
-            <searchBar placeholder="输入编号、名称" radius="60" />
+            <searchBar v-model="searchInput.searchKey" placeholder="输入编号、名称" radius="60" @confirm="handleConfirm" @clear="handleConfirm" />
           </view>
         </template>
         <view class="flex pl-4">
-          <view class="mr-2"><dropDownScrollView placeholder="货物类型" :list="range" /></view>
+          <view class="mr-2"><dropDownScrollView v-model="searchInput.goodsType" placeholder="物料类型" :list="goodTypeList" @finally="handleConfirm" /></view>
 
-          <view> <dropDownScrollView placeholder="购入日期" :list="range" /></view>
+          <!-- <view> <dropDownScrollView placeholder="购入日期" :list="range" /></view> -->
         </view>
       </dropDownBox>
     </view>
 
-    <view class="grow-1 min-h-0">
+    <view class="grow-1 pt-2">
       <mc-uni
         :fixed="false"
         style="height: 100%"
@@ -28,84 +28,94 @@
         @up="upCallback"
       >
         <view class="data-item" v-for="v in data">
-          <view class="ml-2 mr-2 mt-2">
+          <view class="ml-2 mr-2 ">
             <view class="pt-3 pb-3 pl-3 pr-3 flex flex-col bg-#ffffff">
-              <view class="flex items-center mb-2">
-                <view class="w-130rpx text-align-last-justify align-middle">
-                  <text class="align-middle">编号</text>
+              <view class="flex items-baseline mb-3">
+                <view class="w-136rpx text-align-last-justify align-middle">
+                  <text >物料编号</text>
                 </view>
                 <text>：</text>
-                <view class="ml-1"><text class="align-bottom">1001</text></view>
+                <view class="ml-1"><text class="align-bottom">{{ v?.goodsCode }}</text></view>
               </view>
 
-              <view class="flex items-center mb-2">
-                <view class="w-130rpx text-align-last-justify align-middle">
-                  <text class="align-middle">货物类型</text>
+              <view class="flex items-baseline mb-3">
+                
+                <view class="w-136rpx text-align-last-justify align-middle">
+                  <text >物料类型</text>
                 </view>
                 <text>：</text>
-                <view class="ml-1"><text class="align-bottom">维修配件</text></view>
+                <view class="ml-1"><text class="align-bottom">{{ getGoodLabel(v?.goodsType) }}</text></view>
               </view>
 
-              <view class="flex items-center mb-2">
-                <view class="w-130rpx text-align-last-justify align-middle">
-                  <text class="align-middle">货物名称</text>
+              <view class="flex iitems-baseline mb-3">
+                <view class="w-136rpx text-align-last-justify align-middle">
+                  <text >物料名称</text>
                 </view>
                 <text>：</text>
-                <view class="ml-1"><text class="align-bottom">发动机</text></view>
+                <view class="ml-1"><text class="align-bottom">{{ v?.goodsName }}</text></view>
               </view>
 
-              <view class="flex items-center mb-3">
-                <view class="w-130rpx text-align-last-justify align-middle">
-                  <text class="align-middle">型号</text>
+              <view class="flex items-baseline mb-3">
+                <view class="w-136rpx text-align-last-justify align-middle">
+                  <text >物料型号</text>
                 </view>
                 <text>：</text>
-                <view class="ml-1"><text class="align-bottom">ABS21-54545</text></view>
+                <view class="ml-1"><text class="align-bottom">{{ v?.goodsModel }}</text></view>
               </view>
 
-              <view class="flex items-center mb-3">
-                <view class="w-130rpx text-align-last-justify align-middle">
-                  <text class="align-middle">购入价格</text>
+              <view class="flex items-baseline mb-3">
+                <view class="w-136rpx text-align-last-justify ">
+                  <text >物料单价</text>
                 </view>
                 <text>：</text>
-                <view class="ml-1"><text class="align-bottom">20000 元</text></view>
+                <view class="ml-1"><text>{{ v?.goodsUnitPrice }} 元</text></view>
               </view>
 
-              <view class="flex items-center mb-3">
-                <view class="w-130rpx text-align-last-justify align-middle">
+              <!-- <view class="flex items-center mb-3">
+                <view class="w-136rpx text-align-last-justify align-middle">
                   <text class="align-middle">购入日期</text>
                 </view>
                 <text>：</text>
                 <view class="ml-1"><text class="align-bottom">2021-05-13</text></view>
-              </view>
+              </view> -->
 
-              <view class="flex items-center mb-3">
-                <view class="w-130rpx text-align-last-justify align-middle">
+              <!-- <view class="flex items-center mb-3">
+                <view class="w-136rpx text-align-last-justify align-middle">
                   <text class="align-middle">使用期限</text>
                 </view>
                 <text>：</text>
-                <view class="ml-1"><text class="align-bottom">--</text></view>
-              </view>
+                <view class="ml-1"><text class="align-bottom">{{ v?.useperiod }}</text></view>
+              </view> -->
 
-              <view class="flex items-center mb-3">
-                <view class="w-130rpx text-align-last-justify align-middle">
-                  <text class="align-middle">预警值</text>
+              <view class="flex items-baseline mb-3">
+                <view class="w-136rpx text-align-last-justify ">
+                  <text >预警值</text>
                 </view>
                 <text>：</text>
-                <view class="ml-1"><text class="align-bottom">1</text></view>
+                <view class="ml-1"><text >{{ v?.alertNumber }}</text></view>
               </view>
 
-              <view class="flex items-center mb-3">
-                <view class="w-130rpx text-align-last-justify align-middle">
-                  <text class="align-middle">库存量</text>
+              <view class="flex items-baseline mb-3">
+                <view class="w-136rpx text-align-last-justify ">
+                  <text class="">库存量</text>
                 </view>
                 <text>：</text>
-                <view class="ml-1"><text class="align-bottom">10</text></view>
+                <view class="ml-1 "><text class="align-base ">{{ v?.goodsNumber }}</text></view>
               </view>
+
+              <view class="flex items-baseline mb-3">
+                <view class="w-136rpx text-align-last-justify ">
+                  <text class="">厂家</text>
+                </view>
+                <text>：</text>
+                <view class="ml-1 flex items-center"><text class="align-base ">{{ v?.goosManufacturer }}</text></view>
+              </view>
+
 
               <view class="text-right">
                 <button type="primary" plain size="mini" class="mr-2">补货</button>
-                <button type="primary" plain size="mini" class="mr-2">详情</button>
-                <button type="primary" plain size="mini">编辑</button>
+                <button type="primary" plain size="mini" class="mr-2" @click="handleToDetail(v)">详情</button>
+                <button type="primary" plain size="mini" @click="handleToEdit(v)">编辑</button>
               </view>
             </view>
           </view>
@@ -116,16 +126,24 @@
 
   <uni-popup style="z-index: 999" ref="popup" type="bottom">
     <view class="bg-#ffffff">
-      <view class="b1">
+      <!-- <view class="b1">
         <button class="btn-no-border">按员工查</button>
       </view>
 
       <view class="b1">
         <button class="btn-no-border">资产流水</button>
-      </view>
+      </view> -->
 
-      <view class="b1">
-        <button class="btn-no-border">资产购入</button>
+      <view class="b1" @click="handleToPurchase">
+        <button class="btn-no-border">
+          <text>资产购入</text>
+          <uni-icons
+          type="arrow-right"
+          
+         
+        />
+        </button>
+        
       </view>
     </view>
   </uni-popup>
@@ -140,25 +158,62 @@ import { onLoad, onPageScroll, onReachBottom } from '@dcloudio/uni-app'
 import dropDownScrollView from '@/components/drop-down-scroll-view/index.vue'
 import dropDownBox from '@/components/drop-down-scroll-view/drop-down-box.vue'
 import { onNavigationBarButtonTap } from '@dcloudio/uni-app'
+import { useDictStore } from '@/stores'
+import { getGoodsinforList } from '@/api'
+
+const dictStore = useDictStore();
+
+
+const goodTypeList = computed(() => {
+  return dictStore.goodtype?.map((item:any) => ({
+    lable: item.value,
+    value: item.code
+  }))
+})
+
+
+const getGoodLabel = (code:any) => {
+  if(!code) return ''
+  return  dictStore.goodtype?.find((item:any) => item.code == code)?.value
+}
+
+onLoad(() => {
+  dictStore.getGoodtype()
+})
+
+const searchInput = ref({
+  goodsType: '',
+  searchKey: ''
+}) 
+
+const handleToPurchase = () => {
+  uni.redirectTo({ url: '/pages/store-purchase/store-purchase' })
+}
+const handleToEdit = (v:any) => {
+  uni.redirectTo({ url: `/pages/store-edit/store-edit?id=${v.id}` })
+}
+const handleToDetail = (v:any) => {
+  uni.redirectTo({ url: `/pages/store-manage-detail/store-manage-detail?id=${v.id}` })
+}
+
+
+const handleConfirm = () =>{
+  downCallback(mescroll.value)
+  
+}
 
 const popup = ref()
 onNavigationBarButtonTap(() => {
-  console.log(1)
+ 
   popup.value.open('bottom')
 })
 
-const range = [
-  { value: 0, label: '维修配件' },
-  { value: 1, label: '仓库零件' },
-]
 
 const { mescrollInit, getMescroll } = useMescroll(onPageScroll, onReachBottom) // 调用mescroll的hook
 
 const mescroll = computed(() => getMescroll()) as any // 必须使用计算属性才可及时获取到mescroll对象,此处是me-video中使用
 
-onLoad(() => {
-  console.log('页面 onload')
-})
+
 // 控制上拉加载的参数
 const upOptions = ref({
   use: true, // 是否启用上拉加载; 默认true
@@ -169,13 +224,13 @@ const upOptions = ref({
     size: 10, // 每页数据的数量
     time: null, // 加载第一页数据服务器返回的时间; 防止用户翻页时,后台新增了数据从而导致下一页数据重复;
   },
-  noMoreSize: 3,
+  noMoreSize: 5,
   textNoMore: '-- END --', // 没有更多数据的提示文本
   empty: {
     use: true, // 是否显示空布局
     icon: 'https://www.mescroll.com/img/mescroll-empty.png', // 图标路径
     tip: '~ 暂无相关数据 ~', // 提示
-    btnText: '去逛逛 >', // 按钮
+    // btnText: '去逛逛 >', // 按钮
     fixed: false, // 是否使用fixed定位,默认false; 配置fixed为true,以下的top和zIndex才生效 (transform会使fixed失效,最终会降级为absolute)
     top: '100rpx', // fixed定位的top值 (完整的单位值,如 "10%"; "100rpx")
     zIndex: 99, // fixed定位z-index值
@@ -201,31 +256,32 @@ const downOptions = ref({
   textLoading: '加载中 ...', // 加载中的提示文本
 })
 
-const data = ref(0)
-// 上拉加载函数
-const upCallback = async (ms: any, page: any) => {
-  console.log('上拉加载')
+const data = ref<any>([])
 
-  await sleep(1000)
-  if (ms.optUp.page.num === 1) {
-    data.value = 10
-    mescroll.value.endSuccess(10, true)
-  } else {
-    data.value = 12
-    mescroll.value.endSuccess(3, false)
+const isUp = ref(true)
+
+// 上拉加载函数
+const upCallback = async (ms: any) => {
+  try {
+    const res = await getGoodsinforList({
+      page: ms.optUp.page.num,
+      pageSize: ms.optUp.page.size,
+      ...searchInput.value,
+    })
+
+    data.value = isUp.value ? res?.result?.items : data.value.concat(res?.result?.items || [])
+    mescroll.value.endSuccess(res?.result?.items?.length, res?.result?.totalPages)
+
+    isUp.value = false
+  } catch (_) {
+    ms.endErr()
   }
 }
 
 // 下拉刷新函数
 const downCallback = async (ms: any) => {
-  await sleep(2000)
-
-  console.log('下拉刷新', ms)
-
-  data.value = 2
-  // ms.endDownScroll()
-
-  ms.endSuccess(2)
+  isUp.value = true
+  ms?.resetUpScroll()
 }
 </script>
 

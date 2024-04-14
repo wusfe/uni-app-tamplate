@@ -2,7 +2,7 @@
   <view class="flex flex-col h-100%">
     <view class="shrink-0">
       <view class="flex justify-between items-center bg-#ffffff pt-3 pb-3 pl-3 pr-3">
-        <view class="text-color-primary">今日船只：</view>
+        <view class="text-color-primary">今日船只：{{ total }}</view>
 
         <!-- <view class="flex justify-between items-center">
           <text class="text-color-primary text-xs mr-1">选择时间</text>
@@ -27,8 +27,13 @@
             class="bg-#ffffff px-4 py-4 rounded-20rpx border-1px border-color-gray-3 border-solid"
           >
             <view class="flex justify-between items-center">
-              <view class="color-gray-4">船号：kk22210</view>
-              <view class="color-gray-4">状态：到达</view>
+              <view class="color-gray-4">船号：{{ v?.shipCode }}</view>
+              
+              <view class="color-gray-4">状态：到达
+                
+                <!-- <text class="text-sm scolor" v-if="v?.shipState">运行中</text>
+              <text class="text-sm text-danger" v-if="!v?.shipState">停运</text> -->
+              </view>
             </view>
 
             <view class="flex items-center justify-around mt-4">
@@ -38,8 +43,8 @@
                 </view>
 
 
-                <view class="">
-                  <button type="primary" size="mini" plain class="block" style="border-radius: 30rpx;padding: 0rpx 60rpx">到达</button>
+                <view class="" >
+                  <button type="primary" size="mini" plain class="block" style="border-radius: 30rpx;padding: 0rpx 60rpx" @click="handleArrive(v)">到达</button>
                 </view>
               
             </view>
@@ -54,13 +59,18 @@
 import { onLoad, onPageScroll, onReachBottom } from '@dcloudio/uni-app'
 import { ref, computed } from 'vue'
 import { sleep, useMescroll } from '@/composables'
+import { peopleandcarnumberAdd, shipinforPage } from '@/api';
+
+const searchInput = ref({
+  
+})
+
+const total = ref('')
 const { mescrollInit, getMescroll } = useMescroll(onPageScroll, onReachBottom) // 调用mescroll的hook
 
 const mescroll = computed(() => getMescroll()) as any // 必须使用计算属性才可及时获取到mescroll对象,此处是me-video中使用
 
-onLoad(() => {
-  console.log('页面 onload')
-})
+
 // 控制上拉加载的参数
 const upOptions = ref({
   use: true, // 是否启用上拉加载; 默认true
@@ -71,13 +81,13 @@ const upOptions = ref({
     size: 10, // 每页数据的数量
     time: null, // 加载第一页数据服务器返回的时间; 防止用户翻页时,后台新增了数据从而导致下一页数据重复;
   },
-  noMoreSize: 3,
+  noMoreSize: 5,
   textNoMore: '-- END --', // 没有更多数据的提示文本
   empty: {
     use: true, // 是否显示空布局
     icon: 'https://www.mescroll.com/img/mescroll-empty.png', // 图标路径
     tip: '~ 暂无相关数据 ~', // 提示
-    btnText: '去逛逛 >', // 按钮
+    // btnText: '去逛逛 >', // 按钮
     fixed: false, // 是否使用fixed定位,默认false; 配置fixed为true,以下的top和zIndex才生效 (transform会使fixed失效,最终会降级为absolute)
     top: '100rpx', // fixed定位的top值 (完整的单位值,如 "10%"; "100rpx")
     zIndex: 99, // fixed定位z-index值
@@ -103,31 +113,45 @@ const downOptions = ref({
   textLoading: '加载中 ...', // 加载中的提示文本
 })
 
-const data = ref(0)
-// 上拉加载函数
-const upCallback = async (ms: any, page: any) => {
-  console.log('上拉加载')
+const data = ref<any>([])
 
-  await sleep(1000)
-  if (ms.optUp.page.num === 1) {
-    data.value = 10
-    mescroll.value.endSuccess(10, true)
-  } else {
-    data.value = 12
-    mescroll.value.endSuccess(3, false)
+const isUp = ref(true)
+
+// 上拉加载函数
+const upCallback = async (ms: any) => {
+  try {
+    const res = await shipinforPage({
+      page: ms.optUp.page.num,
+      pageSize: ms.optUp.page.size,
+      ...searchInput.value,
+    })
+
+    data.value = isUp.value ? res?.result?.items : data.value.concat(res?.result?.items || [])
+
+    total.value =  res?.result?.total
+
+    mescroll.value.endSuccess(res?.result?.items?.length, res?.result?.totalPages)
+
+    isUp.value = false
+  } catch (_) {
+    ms.endErr()
   }
 }
 
 // 下拉刷新函数
 const downCallback = async (ms: any) => {
-  await sleep(2000)
+  isUp.value = true
+  ms?.resetUpScroll()
+}
 
-  console.log('下拉刷新', ms)
-
-  data.value = 2
-  // ms.endDownScroll()
-
-  ms.endSuccess(2)
+const handleArrive = (v:any) => {
+  peopleandcarnumberAdd({
+    shipCode: v?.shipCode
+  }).then(res => {
+    uni.showToast({
+      title: '操作成功'
+    })
+  })
 }
 </script>
 

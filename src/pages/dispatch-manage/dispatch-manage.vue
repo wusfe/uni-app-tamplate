@@ -1,10 +1,15 @@
 <template>
   <view class="flex flex-col h-100% bg-#ffffff">
     <view class="pl-4 pr-4 pt-2 mt-2 bb1 pb-3 shrink-0">
-      <searchBar placeholder="请输入船名或船号" radius="60" />
+      <searchBar
+        v-model="searchInput.searchKey"
+        @clear="handleConfirm"
+        @confirm="handleConfirm"
+        placeholder="请输入船名或船号"
+        radius="60"
+      />
     </view>
 
-   
     <view class="flex pl-1 pr-1 bb1 shrink-0">
       <view class="w-25% text-center pt-2 pb-2">
         <text class="text-sm">船号</text>
@@ -13,9 +18,7 @@
         <text class="text-sm">船名</text>
       </view>
       <view class="w-25% text-center pt-2 pb-2">
-        <text class="text-sm">
-          人员名单
-        </text>
+        <text class="text-sm"> 人员名单 </text>
       </view>
       <view class="w-25% text-center pt-2 pb-2">
         <text class="text-sm">运行状态</text>
@@ -23,9 +26,6 @@
     </view>
 
     <view class="grow-1 min-h-0">
-
-
-      
       <mc-uni
         :fixed="false"
         style="height: 100%"
@@ -35,42 +35,43 @@
         @down="downCallback"
         @up="upCallback"
       >
-      <view class="bg-#ffffff data-item" v-for="v in data">
-        <view class="flex pl-1 pr-1 bb1 shrink-0">
-      <view class="w-25% text-center pt-2 pb-2">
-        <text class="text-sm">{{ index * 100 }}</text>
-      </view>
-      <view class="w-25% text-center pt-2 pb-2">
-        <text class="text-sm">正扬号01</text>
-      </view>
-      <view class="w-25% text-center pt-2 pb-2">
-        <i class="zhfont zh-a-renyuanmingdanbiaodan_huaban1"></i>
-       
-      </view>
-      <view class="w-25% text-center pt-2 pb-2">
-        <text class="text-sm">运行中</text>
-      </view>
-    </view>
+        <view class="bg-#ffffff data-item" v-for="v in data" @click="handleToDetail(v)">
+          <view class="flex pl-1 pr-1 bb1 shrink-0">
+            <view class="w-25% text-center pt-2 pb-2">
+              <text class="text-sm">{{ v?.shipCode }}</text>
+            </view>
+            <view class="w-25% text-center pt-2 pb-2">
+              <text class="text-sm">{{ v?.shipName }}</text>
+            </view>
+            <view class="w-25% text-center pt-2 pb-2">
+              <text class="text-sm">{{ v?.shipUserInfor }}</text>
+            </view>
+            <view class="w-25% text-center pt-2 pb-2">
+              <text class="text-sm scolor" v-if="v?.shipState">运行中</text>
+              <text class="text-sm text-danger" v-if="!v?.shipState">停运</text>
+            </view>
+          </view>
         </view>
       </mc-uni>
     </view>
-    
   </view>
 </template>
 
 <script setup lang="ts">
-import searchBar from '@/components/search-bar/index.vue';
+import searchBar from '@/components/search-bar/index.vue'
 import { onLoad, onNavigationBarButtonTap, onPageScroll, onReachBottom } from '@dcloudio/uni-app'
-import { computed, ref } from 'vue';
+import { computed, ref } from 'vue'
 import { sleep, useMescroll } from '@/composables'
+import { dispatchinforPage } from '@/api'
+
+const searchInput = ref({
+  searchKey: '',
+})
 
 const { mescrollInit, getMescroll } = useMescroll(onPageScroll, onReachBottom) // 调用mescroll的hook
 
 const mescroll = computed(() => getMescroll()) as any // 必须使用计算属性才可及时获取到mescroll对象,此处是me-video中使用
 
-onLoad(() => {
-  console.log('页面 onload')
-})
 // 控制上拉加载的参数
 const upOptions = ref({
   use: true, // 是否启用上拉加载; 默认true
@@ -81,13 +82,13 @@ const upOptions = ref({
     size: 10, // 每页数据的数量
     time: null, // 加载第一页数据服务器返回的时间; 防止用户翻页时,后台新增了数据从而导致下一页数据重复;
   },
-  noMoreSize: 3,
+  noMoreSize: 5,
   textNoMore: '-- END --', // 没有更多数据的提示文本
   empty: {
     use: true, // 是否显示空布局
     icon: 'https://www.mescroll.com/img/mescroll-empty.png', // 图标路径
     tip: '~ 暂无相关数据 ~', // 提示
-    btnText: '去逛逛 >', // 按钮
+    // btnText: '去逛逛 >', // 按钮
     fixed: false, // 是否使用fixed定位,默认false; 配置fixed为true,以下的top和zIndex才生效 (transform会使fixed失效,最终会降级为absolute)
     top: '100rpx', // fixed定位的top值 (完整的单位值,如 "10%"; "100rpx")
     zIndex: 99, // fixed定位z-index值
@@ -113,40 +114,50 @@ const downOptions = ref({
   textLoading: '加载中 ...', // 加载中的提示文本
 })
 
-const data = ref(0)
-// 上拉加载函数
-const upCallback = async (ms: any, page: any) => {
-  console.log('上拉加载')
+const data = ref<any>([])
 
-  await sleep(1000)
-  if (ms.optUp.page.num === 1) {
-    data.value = 30
-    mescroll.value.endSuccess(10, true)
-  } else {
-    data.value = 32
-    mescroll.value.endSuccess(3, false)
+const isUp = ref(true)
+
+// 上拉加载函数
+const upCallback = async (ms: any) => {
+  try {
+    const res = await dispatchinforPage({
+      page: ms.optUp.page.num,
+      pageSize: ms.optUp.page.size,
+      ...searchInput.value,
+    })
+
+    data.value = isUp.value ? res?.result?.items : data.value.concat(res?.result?.items || [])
+    mescroll.value.endSuccess(res?.result?.items?.length, res?.result?.totalPages)
+
+    isUp.value = false
+  } catch (_) {
+    ms.endErr()
   }
 }
 
 // 下拉刷新函数
 const downCallback = async (ms: any) => {
-  await sleep(2000)
-
-  console.log('下拉刷新', ms)
-
-  data.value = 2
-  // ms.endDownScroll()
-
-  ms.endSuccess(2)
+  isUp.value = true
+  ms?.resetUpScroll()
 }
 
+const handleConfirm = () => {
+  downCallback(mescroll.value)
+}
+
+const handleToDetail = (v:any) => {
+    uni.navigateTo({
+      url: `/pages/dispatch-detail/dispatch-detail?id=${v.id}`
+    })
+}
 
 onNavigationBarButtonTap(() => {
   console.log('点击新增')
-
+  uni.navigateTo({
+    url: '/pages/dispatch-add/dispatch-add',
+  })
 })
-
-
 </script>
 
-<style lang="scss" ></style>
+<style lang="scss"></style>

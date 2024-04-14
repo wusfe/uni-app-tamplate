@@ -14,8 +14,9 @@
       <view>
         <singleBox>
           <singleSelect
+            :model-value="0"
             arrow-direct="right"
-            :modelValue="0"
+            @change="handleChange"
             placeholder="请选择日期"
             :localdata="dateType"
           />
@@ -128,16 +129,29 @@
 </template>
 
 <script setup lang="ts">
+import { orderBydateList } from '@/api';
 import singleSelect from '@/components/single-select/index.vue'
 import singleBox from '@/components/single-select/single-box.vue'
+import { onLoad } from '@dcloudio/uni-app';
+import moment from 'moment';
+import { ref } from 'vue';
 
+
+const searchInput = ref({
+  dt: moment().format('YYYY-MM-DD')
+})
+
+const handleChange = (v:any) => {
+  console.log(v);
+  
+}
 const dateType = [
   {
     text: '今日',
     value: 0,
   },
   {
-    text: '明日',
+    text: '昨日',
     value: 1,
   },
   {
@@ -145,6 +159,14 @@ const dateType = [
     value: 2,
   },
 ]
+
+const detail = ref()
+onLoad(() => {
+  orderBydateList(searchInput.value.dt).then(res => {
+    console.log(res);
+    detail.value = res?.result || []
+  })
+})
 </script>
 
 <style scoped lang="scss">

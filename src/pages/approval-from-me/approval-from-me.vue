@@ -5,12 +5,21 @@
       <dropDownBox class="pt-3">
         <template v-slot:top>
           <view class="pl-4 pr-4 mb-1">
-            <searchBar placeholder="输入编号、名称" radius="60" />
+            <searchBar placeholder="输入编号、名称" radius="60" v-model="searchInput.searchKey" @clear="handleConfirm" @confirm="handleConfirm" />
           </view>
         </template>
-        <view class="flex pl-4 ">
+
+        <view class="flex">
+            <view class="ml-6">
+              <dropDownScrollView placeholder="请选择任务类型" v-model="searchInput.taskType" :list="taskList"  @finally="handleConfirm" />
+            </view>
+
+          
+          </view>
+          
+        <!-- <view class="flex pl-4 ">
          <view class="w-50% flex justify-center items-center br1">
-          <dropDownScrollView placeholder="请选择审批类型" :list="range" />
+          <dropDownScrollView placeholder="请选择审批类型" :list="taskList" />
          </view>
          
 
@@ -18,7 +27,7 @@
           <dropDownScrollView placeholder="请选择审批状态" :list="range" />
          </view>
 
-        </view>
+        </view> -->
       </dropDownBox>
     </view>
 
@@ -32,22 +41,24 @@
         @down="downCallback"
         @up="upCallback"
       >
-        <view class="bg-#ffffff data-item" v-for="v in data">
+        <view class="bg-#ffffff data-item" v-for="v in data" @click="handleDetail(v)">
           <view class="pt-3 pb-3 pl-3 pr-3 flex">
-            <view class="text-center shrink-0">
-              <image src="/static/avr.png" class="w-100rpx h-100rpx" mode="scaleToFill"></image>
-              <view class="mt-1"><text class="text-sm">丁曼容</text></view>
+            <view class="text-center shrink-0 ">
+              <image :src="v.taskUserAvatar|| '/static/avr.png'" class="w-100rpx h-100rpx" mode="scaleToFill"></image>
+              <view class="mt-1  w-138rpx e1"><text class="text-sm  e1">{{ v?.taskUserName }}</text></view>
             </view>
 
             <view class="ml-3 pt-1.5 grow-1">
-              <view class="mb-1"><text class="">APPR202210130001</text></view>
-              <view><text class="text-sm">丁曼容发起的发动机领用审批</text></view>
+              <view class="mb-1"><text class="">{{ v?.taskTitle }}</text></view>
+              <view><text class="text-sm">{{v?.taskUserName}}发起的发动机领用审批</text></view>
             </view>
 
             <view class="pt-1.5 flex flex-col justify-between shrink-0">
-              <view><text class="color-gray-400">2022/10/13</text></view>
+              <view><text class="color-gray-400">{{ v?.taskStime? moment(v?.taskStime)?.format("YYYY/MM/DD"):'' }}</text></view>
               <view class="text-right">
-                <text class="text-color-primary">审核中</text>
+                <text class="text-danger" v-if="v?.taskState === 0">审核中</text>
+                <text class="scolor" v-if="v?.taskState === 1">已通过</text>
+                <!-- <text class="text-color-primary">审核中</text> -->
               </view>
             </view>
           </view>
@@ -65,20 +76,30 @@ import { computed, ref } from 'vue'
 import { onLoad, onPageScroll, onReachBottom } from '@dcloudio/uni-app'
 import dropDownScrollView from '@/components/drop-down-scroll-view/index.vue'
 import dropDownBox from '@/components/drop-down-scroll-view/drop-down-box.vue'
-
+import { taskinforPage } from '@/api'
+import { useDictStore } from '@/stores'
+import moment from 'moment'
+const dictStore = useDictStore();
 const range = [
   { value: 0, label: '全部' },
   { value: 1, label: '待审核' },
   { value: 2, label: '已审核' },
 ]
-
+const taskList = computed(() => {
+ return dictStore.taskType?.map((item:any) => ( { value:item?.code, lable: item?.value }))
+})
+onLoad(() => {
+  dictStore.getTaskType()
+})
+const searchInput = ref({
+  searchKey: '',
+  taskType: '',
+})
 const { mescrollInit, getMescroll } = useMescroll(onPageScroll, onReachBottom) // 调用mescroll的hook
 
 const mescroll = computed(() => getMescroll()) as any // 必须使用计算属性才可及时获取到mescroll对象,此处是me-video中使用
 
-onLoad(() => {
-  console.log('页面 onload')
-})
+
 // 控制上拉加载的参数
 const upOptions = ref({
   use: true, // 是否启用上拉加载; 默认true
@@ -89,13 +110,13 @@ const upOptions = ref({
     size: 10, // 每页数据的数量
     time: null, // 加载第一页数据服务器返回的时间; 防止用户翻页时,后台新增了数据从而导致下一页数据重复;
   },
-  noMoreSize: 3,
+  noMoreSize: 5,
   textNoMore: '-- END --', // 没有更多数据的提示文本
   empty: {
     use: true, // 是否显示空布局
     icon: 'https://www.mescroll.com/img/mescroll-empty.png', // 图标路径
     tip: '~ 暂无相关数据 ~', // 提示
-    btnText: '去逛逛 >', // 按钮
+    // btnText: '去逛逛 >', // 按钮
     fixed: false, // 是否使用fixed定位,默认false; 配置fixed为true,以下的top和zIndex才生效 (transform会使fixed失效,最终会降级为absolute)
     top: '100rpx', // fixed定位的top值 (完整的单位值,如 "10%"; "100rpx")
     zIndex: 99, // fixed定位z-index值
@@ -121,31 +142,44 @@ const downOptions = ref({
   textLoading: '加载中 ...', // 加载中的提示文本
 })
 
-const data = ref(0)
-// 上拉加载函数
-const upCallback = async (ms: any, page: any) => {
-  console.log('上拉加载')
+const data = ref<any>([])
 
-  await sleep(1000)
-  if (ms.optUp.page.num === 1) {
-    data.value = 10
-    mescroll.value.endSuccess(10, true)
-  } else {
-    data.value = 12
-    mescroll.value.endSuccess(3, false)
+const isUp = ref(true)
+
+// 上拉加载函数
+const upCallback = async (ms: any) => {
+  try {
+    const res = await taskinforPage({
+      page: ms.optUp.page.num,
+      pageSize: ms.optUp.page.size,
+      ...searchInput.value,
+    })
+
+    data.value = isUp.value ? res?.result?.items : data.value.concat(res?.result?.items || [])
+    mescroll.value.endSuccess(res?.result?.items?.length, res?.result?.totalPages)
+
+    isUp.value = false
+  } catch (_) {
+    ms.endErr()
   }
 }
 
 // 下拉刷新函数
 const downCallback = async (ms: any) => {
-  await sleep(2000)
+  isUp.value = true
+  ms?.resetUpScroll()
+}
 
-  console.log('下拉刷新', ms)
 
-  data.value = 2
-  // ms.endDownScroll()
+const handleConfirm = () =>{
+  downCallback(mescroll.value)
+  
+}
 
-  ms.endSuccess(2)
+const handleDetail = (v:ay) => {
+  uni.navigateTo({
+    url:`/pages/operation-process/operation-process?id=${v.id}`,
+  })
 }
 </script>
 

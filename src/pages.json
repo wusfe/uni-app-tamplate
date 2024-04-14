@@ -9,6 +9,14 @@
 		}
 	},
 	"pages": [
+		
+		{
+			"path": "pages/home/home",
+			"style": {
+				"navigationBarTitleText": "首页",
+				"navigationStyle": "custom"
+			}
+		},
 		{
 			"path": "pages/login/login",
 			"style": {
@@ -21,11 +29,18 @@
 				"navigationBarTitleText": "防碰撞"
 			}
 		},
-		
 		{
 			"path": "pages/finance-statistics/finance-statistics",
 			"style": {
-				"navigationBarTitleText": "财务统计"
+				"navigationBarTitleText": "财务统计",
+				"titleNView": false
+			}
+		},
+		{
+			"path": "pages/order-statistics/order-statistics",
+			"style": {
+				"navigationBarTitleText": "订单统计",
+				"titleNView": false
 			}
 		},
 		{
@@ -117,24 +132,6 @@
 			}
 		},
 		{
-			"path": "pages/material-apply/material-apply",
-			"style": {
-				"navigationBarTitleText": "领用申请"
-			}
-		},
-		{
-			"path": "pages/material-detail/material-detail",
-			"style": {
-				"navigationBarTitleText": "领用详情"
-			}
-		},
-		{
-			"path": "pages/material-record/material-record",
-			"style": {
-				"navigationBarTitleText": "领用记录"
-			}
-		},
-		{
 			"path": "pages/material-manage/material-manage",
 			"style": {
 				"navigationBarTitleText": "物料领用",
@@ -149,6 +146,25 @@
 				}
 			}
 		},
+		{
+			"path": "pages/material-apply/material-apply",
+			"style": {
+				"navigationBarTitleText": "领用申请"
+			}
+		},
+		{
+			"path": "pages/material-detail/material-detail",
+			"style": {
+				"navigationBarTitleText": "领用详情"
+			}
+		},
+		// {
+		// 	"path": "pages/material-record/material-record",
+		// 	"style": {
+		// 		"navigationBarTitleText": "领用记录"
+		// 	}
+		// },
+		
 		{
 			"path": "pages/store-manage/store-manage",
 			"style": {
@@ -170,6 +186,14 @@
 				"navigationBarTitleText": "仓库购入"
 			}
 		},
+
+		{
+			"path": "pages/store-purchase-record/store-purchase-record",
+			"style": {
+				"navigationBarTitleText": "入库记录"
+			}
+		},
+
 		{
 			"path": "pages/store-edit/store-edit",
 			"style": {
@@ -221,18 +245,12 @@
 				"navigationBarTitleText": "消息中心"
 			}
 		},
-		{
-			"path": "pages/home/home",
-			"style": {
-				"navigationBarTitleText": "首页",
-				"navigationStyle": "custom"
-			}
-		},
+		
 		//pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
 			"path": "pages/more-notice/more-notice",
 			"style": {
-				"navigationBarTitleText": "公告",
+				"navigationBarTitleText": "公告管理",
 				"enablePullDownRefresh": false,
 				"app-plus": {
 					"titleNView": {
@@ -273,7 +291,7 @@
 			},
 			{
 				"text": "我的",
-				"pagePath": "pages/user=center/user-center",
+				"pagePath": "pages/user-center/user-center",
 				"iconPath": "static/tab-me.png",
 				"selectedIconPath": "static/tab-me-select.png"
 			}

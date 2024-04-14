@@ -40,7 +40,9 @@
 
 <script setup lang="ts">
 import { postLoginApi, getUserBaseInfo } from '@/api';
-import  {sm2} from 'sm-crypto-v2'
+
+// @ts-ignore
+import  {sm2} from 'sm-crypto'
 import logoLoad from '@/components/circle-load/index.vue';
 import { ref } from 'vue';
 import { useTokenStore, useUserStore } from '@/stores'

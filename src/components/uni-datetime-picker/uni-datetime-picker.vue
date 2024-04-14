@@ -1,7 +1,9 @@
 <template>
   <view class="uni-date">
     <view class="uni-date-editor" @click="show">
-      <slot>
+      
+      <slot :displayValue="displayValue" :placeholderText="singlePlaceholderText">
+        <!-- 默认是下面的 -->
         <view
           class="uni-date-editor--x"
           :class="{ 'uni-date-editor--x__disabled': disabled, 'uni-date-x--border': border }"
@@ -360,9 +362,9 @@ export default {
     },
   },
   watch: {
-	isPhone(n){
-		console.log(n, 1212);
-	},
+	// isPhone(n){
+	// 	console.log(n, 1212);
+	// },
     type: {
       immediate: true,
       handler(newVal) {
@@ -966,10 +968,10 @@ export default {
           this.$emit('input', [])
           this.$emit('update:modelValue', [])
         }
+      }
 
-        if(shouleHide){
+      if(shouleHide){
           this.close()
-        }
       }
     },
   },

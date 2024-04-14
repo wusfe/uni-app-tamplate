@@ -39,13 +39,13 @@
         </view> -->
 
         <view class="search-box" v-if="showSearch">
-          <searchBar v-model="searchInput" />
+          <searchBar v-model="searchInput" @confirm="handleSearchConfirm" @clear="handleSearchConfirm" />
         </view>
 
         <scroll-view class="select-content" scroll-y>
           <view
             class="select-item"
-            v-for="(item, index) in list"
+            v-for="(item, index) in filter(list)"
             :key="index"
             :style="
               valueIndexOf(item)
@@ -204,6 +204,10 @@ export default {
     this.provideRegistryDropCom && this.provideRegistryDropCom(this)
   },
   methods: {
+    filter(){
+      if(!this.searchInput || this.searchInput?.trim()?.length === 0) return this.list;
+      return this.list?.filter(item => item.lable?.includes(this.searchInput))
+    },
     handleSearch() {
       this.$emit('search', this.searchInput)
     },
@@ -331,7 +335,9 @@ export default {
       this.searchInput = ''
       // 关闭禁止穿透滚动
     },
-    discard() {},
+    handleSearchConfirm(v){
+      console.log(12, v);
+    }
   },
   watch: {
     searchInput(val) {

@@ -134,8 +134,6 @@ const handleToDetail = (v: any) => {
 }
 
 const handleDateConfirm = (v:any) => {
-  console.log(v, 'vvvvvvvs');
-  
   searchInput.value.orderBuyTimeStart = v?.length > 0? v[0]+' 00:00:00':'';
   searchInput.value.orderBuyTimeEnd = v?.length > 0? v[1]+' 23:59:59':'';
 
