@@ -2,8 +2,16 @@
   <view class="flex flex-col h-100%">
     <view class="shrink-0">
       <view class="flex justify-between items-center bg-#ffffff pt-3 pb-3 pl-3 pr-3">
-        <view class="text-color-primary">今日船只：{{ total }}</view>
+        
 
+        <view class="flex justify-between items-center grow-1">
+          <view class="text-color-primary">今日船只：{{ total }}</view>
+          <view class="flex items-center"><text class="text-color-primary text-sm" @click="handleTo">今日统计</text><uni-icons
+            type="arrow-right"
+             color="#007aff"
+            size="18"
+          /></view>
+        </view>
         <!-- <view class="flex justify-between items-center">
           <text class="text-color-primary text-xs mr-1">选择时间</text>
 
@@ -151,6 +159,12 @@ const handleArrive = (v:any) => {
     uni.showToast({
       title: '操作成功'
     })
+  })
+}
+
+const handleTo = () => {
+  uni.navigateTo({
+    url:'/pages/mancar-manage/mancar-manage',
   })
 }
 </script>

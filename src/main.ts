@@ -11,7 +11,11 @@ import { tranNumber } from './utils'
 // import VConsole from 'vconsole';
 
 // const vConsole = new VConsole();
-
+// #ifdef H5
+//@ts-ignore
+import quill from "quill";
+(window as any).Quill = quill;
+// #endif
 export function createApp() {
   const app = createSSRApp(App);
 

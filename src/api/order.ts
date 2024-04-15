@@ -57,4 +57,10 @@ export const orderBydateList= async (dt:any) => http<any>({
   method: 'GET',
  
 })
+// 财务统计
+export const orderByMonthList= async (dtmonth:any) => http<any>({
+  url: `/api/orderinfor/orderByMonthList/${dtmonth}`,
+  method: 'GET',
+ 
+})
 

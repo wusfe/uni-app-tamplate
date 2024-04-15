@@ -5,19 +5,19 @@
     <view class="bg-#ffffff shrink-0">
       <dropDownBox class="pt-3">
         <template v-slot:top>
-          <view class="pl-4 pr-4 mb-1">
-            <searchBar v-model="searchInput.searchKey" placeholder="输入编号、名称" radius="60" @confirm="handleConfirm" @clear="handleConfirm" />
+          <view class="pl-4 pr-4 pb-3">
+            <searchBar v-model="searchInput.searchKey" placeholder="输入站点名称" radius="60" @confirm="handleConfirm" @clear="handleConfirm" />
           </view>
         </template>
-        <view class="flex pl-4">
+        <!-- <view class="flex pl-4">
           <view class="mr-2"><dropDownScrollView v-model="searchInput.goodsType" placeholder="物料类型" :list="goodTypeList" @finally="handleConfirm" /></view>
 
-          <!-- <view> <dropDownScrollView placeholder="购入日期" :list="range" /></view> -->
-        </view>
+        
+        </view> -->
       </dropDownBox>
     </view>
 
-    <view class="grow-1 pt-2 min-h-0">
+    <view class="grow-1 pt-2 min-h-0 pb-2">
       <mc-uni
         :fixed="false"
         style="height: 100%"
@@ -190,10 +190,10 @@ const handleToPurchase = () => {
   uni.redirectTo({ url: '/pages/store-purchase/store-purchase' })
 }
 const handleToEdit = (v:any) => {
-  uni.navigateTo({ url: `/pages/store-edit/store-edit?id=${v.id}` })
+  uni.redirectTo({ url: `/pages/store-edit/store-edit?id=${v.id}` })
 }
 const handleToDetail = (v:any) => {
-  uni.navigateTo({ url: `/pages/store-manage-detail/store-manage-detail?id=${v.id}` })
+  uni.redirectTo({ url: `/pages/store-manage-detail/store-manage-detail?id=${v.id}` })
 }
 
 
@@ -269,8 +269,10 @@ const upCallback = async (ms: any) => {
       ...searchInput.value,
     })
 
-    data.value = isUp.value ? res?.result?.items : data.value.concat(res?.result?.items || [])
-    mescroll.value.endSuccess(res?.result?.items?.length, res?.result?.totalPages)
+    // data.value = isUp.value ? res?.result?.items : data.value.concat(res?.result?.items || [])
+    // mescroll.value.endSuccess(res?.result?.items?.length, res?.result?.totalPages)
+    data.value = []
+    mescroll.value.endSuccess(0, false)
 
     isUp.value = false
   } catch (_) {

@@ -311,6 +311,7 @@ const handleConfirm = async () => {
       title: '更新成功',
     })
 
+    uni.navigateBack()
     // uni.redirectTo({
     //   url: '/pages/store-purchase-record/store-purchase-record',
     // })

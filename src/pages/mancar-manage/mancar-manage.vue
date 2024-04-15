@@ -66,10 +66,8 @@ const searchInput = ref({})
 const data = ref([] as any)
 onLoad(() => {
   peopleandcarnumberListDay({
-    ...searchInput,
+    ...searchInput.value,
   }).then((res) => {
-    console.log(res)
-
     data.value= res?.result || []
   })
 })

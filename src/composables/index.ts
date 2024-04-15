@@ -20,9 +20,11 @@ export const useGetBarHeight = () => {
     // await seelp(5000)
    const data = uni.getSystemInfoSync() as any;
 
+   console.log(data, 'data');
+   
    topHeightRef.value = data?.statusBarHeight as any;
 
-   bottomHeightRef.value = 30;
+   bottomHeightRef.value = 0;
 
   })
 

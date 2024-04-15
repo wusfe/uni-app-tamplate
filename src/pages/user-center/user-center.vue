@@ -7,7 +7,7 @@
           class="bg-#ffffff rounded-20rpx mx-4 px-4 py-6  flex justify-between mt-60rpx"
         >
           <view>
-            <view class="text-xl mb-1">管理员</view>
+            <view class="text-xl mb-1">{{ userStore?.profile?.realName }}</view>
             <view>技术研发部-产品</view>
           </view>
 
@@ -48,14 +48,14 @@
         <uni-icons type="right" size="18" />
       </view>
 
-      <view class="flex justify-between items-center bg-#ffffff py-3 mx-4 px-4 rounded-20rpx mt-30rpx">
+      <!-- <view class="flex justify-between items-center bg-#ffffff py-3 mx-4 px-4 rounded-20rpx mt-30rpx">
         <view class="flex justify-center items-center">
           <i class="zhfont zh-daiwoshenpi color-#007aff text-40rpx mr-3"></i>
           <text>待我审批列表</text>
         </view>
 
         <uni-icons type="right" size="18" />
-      </view>
+      </view> -->
 
       <view class="flex justify-between items-center bg-#ffffff py-3 mx-4 px-4 rounded-20rpx mt-30rpx" @click="handleTo('/pages/approval-from-me/approval-from-me')">
         <view class="flex justify-center items-center">
@@ -72,18 +72,27 @@
 
     
     <view class="mx-4 px-2 mt-8">
-      <button type="primary">退出登录</button>
+      <button type="primary" @click="handleLogout">退出登录</button>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
 import loadImg from '@/components/circle-load/index.vue'
-
+import { useTokenStore,useUserStore } from '@/stores' 
 
 const handleTo = (v:string) => {
   uni.navigateTo({
     url: v
+  })
+}
+const userStore = useUserStore()
+const tokenStore = useTokenStore();
+
+const handleLogout = () => {
+  tokenStore.clearToken()
+  uni.reLaunch({
+    url: '/pages/login/login'
   })
 }
 </script>

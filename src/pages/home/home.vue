@@ -1,5 +1,5 @@
 <template>
-  <view class="home bg-#f5f5f5 min-h-100vh">
+  <view class="home bg-#f5f5f5 h-100% overflow-y-auto pb-46rpx box-border">
     <bar-area area="top" />
     <!-- 欢迎行 -->
     <view class="flex justify-between pb-3 pt-3 bg-white pl-3 pr-3">
@@ -10,7 +10,7 @@
         <!-- <button size="mini" type="primary" plain >登录</button> -->
       </view>
 
-      <view class="flex justify-center items-center text-red-700" @click="handleScanCode">
+      <view class="flex justify-center items-center text-red-700" @click="handleScanCode(1)">
         <uni-icons type="scan" color="" size="28"></uni-icons>
         <text class="ml-1">验票</text>
       </view>
@@ -27,7 +27,7 @@
       </swiper>
     </view>
     <!-- 公告 -->
-    <view class="flex flex-row items-center pl-3 pr-3 mt-3">
+    <view class="flex flex-row items-center pl-3 pr-3 mt-2">
       <view class="text-red-700 pt-1 pb-1 pl-3 pr-3 bg-red-2 rounded-12rpx shrink-0">公告</view>
 
       <view class="flex-1">
@@ -45,8 +45,8 @@
 
     <view class="pl-3 pr-3 mt-3">
       <uni-card is-full :is-shadow="false" margin="0" padding="0" :border="false">
-        <view class="flex pt-7 pb-4">
-          <view class="w-33.33% text-center slide-border">
+        <view class="flex pt-4 pb-2">
+          <view class="w-33.33% text-center slide-border" @click="handleUrl('/pages/approval-from-me/approval-from-me')">
             <view class="mb-1">
               <uni-badge
                 :is-dot="taskNum > 0"
@@ -76,9 +76,9 @@
                 </view>
               </view>
             </view>
-            <view class="text-color-#000000" @tap="handleTo('approval')">今日颜色</view>
+            <view class="text-color-#000000">今日颜色</view>
           </view>
-          <view class="w-33.33% text-center">
+          <view class="w-33.33% text-center" @click="handleUrl('/pages/news/news')">
             <view class="mb-1">
               <uni-badge
                 :is-dot="unReadNum > 0"
@@ -94,7 +94,7 @@
       </uni-card>
     </view>
 
-    <view class="pl-3 pr-3 mt-3">
+    <view class="pl-3 pr-3 mt-3 overflow-x-hidden">
       <uni-row :gutter="60">
         <uni-col
           class="mt-3"
@@ -102,7 +102,7 @@
           v-for="(item, index) in menu"
           :index="index"
           :key="index"
-          @click="handleNavigateTo(item.url)"
+          @click="handleNavigateTo(item)"
         >
           <view class="flex flex-col">
             <view
@@ -119,6 +119,21 @@
 
     <bar-area area="bottom" />
   </view>
+
+  <uni-popup ref="popup"  background-color="#fff" type="bottom" safe-area @maskClick="handlecancelQr">
+    
+    <view class="qr-wrap">
+
+      <view class="shrink-0 flex justify-enf items-center bb1 py-20rpx px-20rpx">
+          <view @click="handlecancelQr">关闭</view>
+        </view>
+      <view class="grow-1 overflow-y-auto min-h-0">
+        <qr v-if="open"  :order-number="orderNumber"/>
+      </view>
+    </view>
+ 
+</uni-popup>
+
 </template>
 
 <script setup lang="tsx">
@@ -126,7 +141,7 @@ import { useUserStore } from '@/stores'
 import { getNewsNotice, getNumberTask, getUnReadList, getTodayColorAll } from '@/api'
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-
+import qr from '@/components/qr/index.vue'
 import permision from '@/utils/permission'
 // 报错
 // import NavigationBar from "@/components/navigation-bar"
@@ -149,6 +164,7 @@ const menu = [
     icon: <i class="zhfont zh-yanpiao text-color-white"></i>,
     bg: '#FE7849',
     text: '验票',
+    onClick: () => handleScanCode(2)
   },
   {
     icon: <i class="zhfont zh-tiaodu1 text-color-white"></i>,
@@ -166,6 +182,7 @@ const menu = [
     icon: <i class="zhfont zh-shipinjiankong text-color-white"></i>,
     bg: '#FF9502',
     text: '视频监控',
+    url: '/pages/video-manage/video-manage'
   },
   {
     icon: <i class="zhfont zh-caiwuguanli text-color-white"></i>,
@@ -179,28 +196,34 @@ const menu = [
     bg: '#FF2D55',
     text: '计人计车',
     // url: '/pages/steamer-arrival/steamer-arrival'
-    url: '/pages/mancar-manage/mancar-manage'
+    url: '/pages/steamer-arrival/steamer-arrival'
+    // url: '/pages/mancar-manage/mancar-manage'
   },
   {
     icon: <i class="zhfont zh-dingdantongji text-color-white"></i>,
     bg: '#00E5FF',
     text: '订单统计',
+    url:'/pages/order-statistics/order-statistics'
   },
   {
     icon: <i class="zhfont zh-fangpengzhuang text-color-white"></i>,
     bg: '#2585EE',
     text: '防碰撞',
+    url: '/pages/anti-collision/anti-collision'
   },
   {
     icon: <i class="zhfont zh-n text-color-white"></i>,
     bg: '#651FFF',
     text: '通知消息',
+    url: '/pages/more-notice/more-notice'
   },
   {
     icon: <i class="zhfont zh-Ship- text-color-white"></i>,
     bg: '#651FFF',
     text: '渡船营运',
+    url: '/pages/material-manage/material-manage'
   },
+  // pages/steamer-arrival/steamer-arrival
 ]
 
 const handleMore = () => {
@@ -213,6 +236,12 @@ const handleTo = (type: string) => {
   if (type === 'approval') {
     uni.navigateTo({ url: '/pages/approval/approval' })
   }
+}
+
+const handleUrl = (url:any) => {
+  uni.navigateTo({
+    url
+  })
 }
 const notice = ref('')
 
@@ -243,16 +272,24 @@ const taskNumFn = async () => {
   taskNum.value = res?.result || 0
 }
 
-const handleNavigateTo = (url: string) => {
-  if (url) {
+const handleNavigateTo = (item:any) => {
+  if (item.url) {
     uni.navigateTo({
-      url,
+      url:item.url
     })
+  }
+  if(item.onClick){
+    item.onClick()
   }
 }
 
+const orderNumber = ref()
+
+const open = ref(false)
+
+const popup = ref()
 // 扫码
-const handleScanCode = async () => {
+const handleScanCode = async (type: 1 | 2) => {
   const result = await permision.requestAndroidPermission('android.permission.READ_EXTERNAL_STORAGE')
 
  
@@ -268,18 +305,29 @@ const handleScanCode = async () => {
     })
   } else {
     uni.scanCode({
+      autoDecodeCharset: true,
       success: function (res) {
-        console.log(res, 'res....');
+        console.log(res,'res');
         
-        console.log('条码类型：' + res.scanType)
-        console.log('条码内容：' + res.result)
-
-        uni.navigateTo({
-          url: `/pages/qr-result/qr-result?orderNumber=${res}`
-        })
+        if(type == 1){
+          uni.navigateTo({
+          url: `/pages/qr-result/qr-result?orderNumber=${res.result}`
+          })
+        }else {
+          orderNumber.value = res.result;
+          popup?.value?.open()
+          open.value = true
+        }
+        
       },
     })
   }
+}
+const handlecancelQr = () => {
+  console.log(11);
+  
+  popup?.value?.close()
+          open.value = false
 }
 
 onLoad(async () => {
@@ -301,5 +349,18 @@ onLoad(async () => {
 
 .slide-border {
   border-right: 1px solid #f5f5f5;
+}
+
+.qr-wrap {
+  height: 90vh;
+  /* #ifdef H5 */
+  padding-top: calc(var(--window-top) + var(--status-bar-height));
+  /* #endif */
+  /* #ifdef APP */
+  padding-top: calc(var(--window-top));
+  /* #endif */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 </style>

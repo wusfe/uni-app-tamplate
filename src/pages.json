@@ -9,7 +9,6 @@
 		}
 	},
 	"pages": [
-		
 		{
 			"path": "pages/home/home",
 			"style": {
@@ -32,15 +31,13 @@
 		{
 			"path": "pages/finance-statistics/finance-statistics",
 			"style": {
-				"navigationBarTitleText": "财务统计",
-				"titleNView": false
+				"navigationBarTitleText": "财务统计"
 			}
 		},
 		{
 			"path": "pages/order-statistics/order-statistics",
 			"style": {
-				"navigationBarTitleText": "订单统计",
-				"titleNView": false
+				"navigationBarTitleText": "订单统计"
 			}
 		},
 		{
@@ -97,7 +94,7 @@
 		{
 			"path": "pages/mancar-manage/mancar-manage",
 			"style": {
-				"navigationBarTitleText": "计人计车"
+				"navigationBarTitleText": "今日统计"
 			}
 		},
 		{
@@ -164,7 +161,6 @@
 		// 		"navigationBarTitleText": "领用记录"
 		// 	}
 		// },
-		
 		{
 			"path": "pages/store-manage/store-manage",
 			"style": {
@@ -186,14 +182,12 @@
 				"navigationBarTitleText": "仓库购入"
 			}
 		},
-
 		{
 			"path": "pages/store-purchase-record/store-purchase-record",
 			"style": {
 				"navigationBarTitleText": "入库记录"
 			}
 		},
-
 		{
 			"path": "pages/store-edit/store-edit",
 			"style": {
@@ -245,7 +239,6 @@
 				"navigationBarTitleText": "消息中心"
 			}
 		},
-		
 		//pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
 			"path": "pages/more-notice/more-notice",
@@ -267,8 +260,13 @@
 					}
 				}
 			}
+		},
+		{
+			"path": "pages/video-manage/video-manage",
+			"style": {
+				"navigationBarTitleText": "视频监控"
+			}
 		}
-		
 	],
 	// 设置 TabBar
 	"tabBar": {
@@ -283,12 +281,12 @@
 				"iconPath": "static/tab-home.png",
 				"selectedIconPath": "static/tab-home-select.png"
 			},
-			{
-				"text": "分类",
-				"pagePath": "pages/category/category",
-				"iconPath": "static/tab-yingyong.png",
-				"selectedIconPath": "static/tab-yingyong-select.png"
-			},
+			// {
+			// 	"text": "分类",
+			// 	"pagePath": "pages/category/category",
+			// 	"iconPath": "static/tab-yingyong.png",
+			// 	"selectedIconPath": "static/tab-yingyong-select.png"
+			// },
 			{
 				"text": "我的",
 				"pagePath": "pages/user-center/user-center",

@@ -1,13 +1,13 @@
 <template>
   <view class="edit-container">
-    <view class="page-body">
+    <view class="page-wrap">
       <view class="wrapper">
         <view class="shrink-0 flex justify-between items-center bb1 py-20rpx px-20rpx">
           <view @click="handlecancel">取消</view>
           <view class="pric" @tap="getCon">保存</view>
         </view>
 
-        <view class="toolbar" @tap="format">
+        <view class="toolbar" @tzp="format">
           <view
             :class="formats.bold ? 'ql-active' : ''"
             class="iconfont icon-zitijiacu"
@@ -132,7 +132,7 @@
           <view class="iconfont icon-outdent" data-name="indent" data-value="-1"></view>
           <view class="iconfont icon-indent" data-name="indent" data-value="+1"></view>
           <view class="iconfont icon-fengexian" @tap="insertDivider"></view>
-          <view class="iconfont icon-charutupian" @tap="insertImage"></view>
+          <view class="iconfont icon-charutupian" @tap="insertImage" data-name="insertImage"></view>
           <view
             :class="formats.header === 1 ? 'ql-active' : ''"
             class="iconfont icon-format-header-1"
@@ -246,20 +246,22 @@ export default {
         .select('#editor')
         .context((res) => {
           this.editorCtx = res.context
-			
-		  if(this.modelValue){
-			this.editorCtx.setContents({
-            ...this.modelValue,
-            success(res) {
-              console.log('success', res)
-            },
-            fail(error) {
-              console.log('erroe', error)
-            },
-          })
-		  }
-          
-
+          const s = this.editorCtx
+          const d = this
+          setTimeout(() => {
+            if (this.modelValue) {
+              s.setContents({
+                ...d.modelValue,
+                success(res) {
+                  console.log('success', 'editor启动成功')
+                  console.log(JSON.stringify(d.modelValue) || 1212)
+                },
+                fail(error) {
+                  console.log('erroe', 'editor启动失败')
+                },
+              })
+            }
+          }, 10)
         })
         .exec()
       // #endif
@@ -273,6 +275,8 @@ export default {
     format(e) {
       let { name, value } = e.target.dataset
       if (!name) return
+
+      console.log(name, 'insertImage')
       // console.log('format', name, value)
       this.editorCtx.format(name, value)
     },
@@ -294,8 +298,15 @@ export default {
         success: (res) => {
           if (res.confirm) {
             this.editorCtx.clear({
-              success: function (res) {
+              success: (res) => {
                 console.log('clear success')
+                this.editorCtx.setContents({
+                  html: '',
+                  delta:{},
+                  success: function () {
+                    console.log('Editor cleared')
+                  },
+                })
               },
             })
           }
@@ -328,7 +339,7 @@ export default {
             name: 'file',
             header: {
               Authorization: memberStore.token?.accessToken
-                ? `Bearer ${ memberStore.token?.accessToken}`
+                ? `Bearer ${memberStore.token?.accessToken}`
                 : undefined,
             },
             success: (uploadFileRes) => {
@@ -358,7 +369,7 @@ export default {
 		padding-top: calc(var(--window-top) + var(--status-bar-height));
 		box-sizing: border-box; */
 }
-.page-body {
+.page-wrap {
   /* height: calc(100vh - var(--window-top) - var(--status-bar-height)); */
   /* height: calc(100vh  - var(--status-bar-height)); */
   /* height: 100vh; */
@@ -368,7 +379,12 @@ export default {
 
 .wrapper {
   height: 100vh;
+  /* #ifdef H5 */
   padding-top: calc(var(--window-top) + var(--status-bar-height));
+  /* #endif */
+  /* #ifdef APP */
+  padding-top: calc(var(--window-top));
+  /* #endif */
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -410,5 +426,9 @@ export default {
 
 .ql-active {
   color: #06c;
+}
+#editor {
+  position: relative;
+  z-index: 99999999999;
 }
 </style>

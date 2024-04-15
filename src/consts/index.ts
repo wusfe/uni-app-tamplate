@@ -36,11 +36,11 @@ export const ORDERCHARGETYPELIST  = [
 
 
 export const ORDER_COMMONICON = {
-  "散客": orderSanke,
-  "二轮车": orderErlun,
-  "三轮车": orderSanlun,
-  "轿车":orderJiaoche,
-  "现金": cash,
-  "移动": moveCash,
-  "ETC": etczf
+  ["散客"]: orderSanke,
+  ["二轮车"]: orderErlun,
+  ["三轮车"]: orderSanlun,
+  ["轿车"]:orderJiaoche,
+  ["现金"]: cash,
+  ["移动"]: moveCash,
+  ["ETC"]: etczf
 };

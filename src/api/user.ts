@@ -9,5 +9,10 @@ export const getUserBaseInfo = (data?: any) => {
     })
   }
 
-
-  
+  // export const getUserBaseInfo = (data?: any) => {
+  //   return http<any>({
+  //     method: 'GET',
+  //     url: '/api/sysAuth/userInfo',
+  //     data,
+  //   })
+  // }

@@ -5,7 +5,7 @@ import { getUserBaseInfo } from '@/api'
 onLaunch(async (router) => {
   console.log('App Launch', '程序启动')
 
-  console.log(router)
+  // console.log(router)
 
   const tokenStore = useTokenStore()
 
@@ -129,6 +129,9 @@ uni-button[size='mini'] {
   color: $uni-color-error;
 }
 
+.pric-bg {
+  background-color: $uni-color-primary;
+}
 .pric {
   color: $uni-color-primary;
 }

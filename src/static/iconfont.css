@@ -1,8 +1,8 @@
 @font-face {
   font-family: "zhfont"; /* Project id 4490099 */
-  src: url('iconfont.ttf?t=1712501283385') format('truetype');
+  src:  url('iconfont.ttf?t=1713145434110') format('truetype');
+      
 }
-       
 
 .zhfont {
   font-family: "zhfont" !important;
@@ -10,6 +10,10 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.zh-yiheyan:before {
+  content: "\e73e";
 }
 
 .zh-daiwoshenpi:before {

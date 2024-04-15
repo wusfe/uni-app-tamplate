@@ -61,9 +61,13 @@
     </view>
   </view>
 
-  <uni-popup ref="popup" background-color="#fff">
-    <Myeditor @confirm="handleEditorConfirm" :modelValue="editorContent" @cancel="handleEditorCancel" />
+  <view class="relative" >
+  <uni-popup ref="popup"  background-color="#fff" type="bottom" safe-area>
+    
+      <Myeditor v-if="open" @confirm="handleEditorConfirm" :modelValue="editorContent" @cancel="handleEditorCancel" />
+   
   </uni-popup>
+</view>
 </template>
 
 <script setup lang="ts">
@@ -98,26 +102,37 @@ const rules = {
   },
 }
 // 获取姓名
+const open = ref(false)
 const popup = ref()
 const handleEdit = () => {
   popup.value.open('bottom')
+
+  setTimeout(() => {
+    open.value = true
+  }, 0)
 }
 
 
 const editorContent = ref()
 
 watch(editorContent, (v) => {
-  formInput.value.content = v?.html
+  formInput.value.content = v?.html === '<p><br></p>' ? '':v?.html
 }, {deep:true})
 
 const handleEditorConfirm = (v: any) => {
- 
-  editorContent.value = v;
+  const { errMsg, text,delta, ...ops } = v 
+  editorContent.value = ops;
   popup.value.close()
+  setTimeout(() => {
+    open.value = false
+  }, 0)
 }
 
 const handleEditorCancel = (v: any) => {
   popup.value.close()
+  setTimeout(() => {
+    open.value = false
+  }, 0)
 }
 
 const handleSubmit = async () => {

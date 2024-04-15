@@ -2,7 +2,7 @@
   <view>
     <map id="map" style="width: 100%; height: 300px" :longitude="longitude" :latitude="latitude">
     </map>
-    <view class="location-info">
+    <view class="location-info px-4">
       <view>当前纬度: {{ latitude }}</view>
       <view>当前经度: {{ longitude }}</view>
     </view>
@@ -10,7 +10,8 @@
     <!-- <button @click="getLocation">获取位置信息</button>
     <button @click="getLocation2">获取位置信息2</button> -->
 
-    <button @click="qrcode">232</button>
+    <!-- <button @click="qrcode">232</button> -->
+    <button @click="getLocation">重新定位</button>
   </view>
 </template>
 <script setup lang="ts">
