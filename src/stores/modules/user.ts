@@ -7,7 +7,9 @@ interface UserResult{
   nickName:string,
   sex: Number,
   realName:string,
-  posName:string
+  posName:string,
+  buttons: string[]
+  orgName?:string
 }
 // 定义 Store
 export const useUserStore = defineStore(
@@ -22,7 +24,11 @@ export const useUserStore = defineStore(
     }
     
     
-
+    const isAuth = (v:string) => {
+      console.log(v);
+      
+      return profile.value?.buttons.some(item => item === v)
+    }
     // 清理会员信息，退出时使用
     const clearProfile = () => {
       profile.value = undefined
@@ -33,6 +39,7 @@ export const useUserStore = defineStore(
       profile,
       setUserInfo,
       clearProfile,
+      isAuth
     }
   },
   {

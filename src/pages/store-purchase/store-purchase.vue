@@ -154,7 +154,7 @@
 </template>
 
 <script setup lang="ts">
-import { getSysUserUserList, getGoodsinforgoodsCodeList, addGoodsturnover } from '@/api'
+import { getSysUserUserList, getGoodsinforgoodsCodeList, addGoodsturnover, getGoodsinforDetail } from '@/api'
 import { onLoad } from '@dcloudio/uni-app'
 import { watch } from 'vue'
 import { ref } from 'vue'
@@ -233,7 +233,9 @@ const rules = {
 
 const goodsList = ref([] as any)
 const userList = ref([] as any)
-onLoad(() => {
+onLoad((query) => {
+  
+
   getGoodsinforgoodsCodeList().then((res) => {
     goodsList.value = res?.result?.map((item: any) => ({
       text: item.label,
@@ -289,7 +291,6 @@ const handleConfirm = async () => {
 }
 
 const reset = () => {
-  console.log(form)
   formInput.value = {
     contractcode: '', //合同编号
     goodsCode: '', // 选择的物料

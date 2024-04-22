@@ -1,14 +1,29 @@
 <script setup lang="ts">
 import { onLaunch, onShow, onHide, onLoad } from '@dcloudio/uni-app'
-import { useTokenStore, useUserStore } from '@/stores'
+import { useTokenStore, useUserStore, useInitStore, useEtcStore } from '@/stores'
 import { getUserBaseInfo } from '@/api'
+import checkUpdate from '@/utils/check-update'
 onLaunch(async (router) => {
   console.log('App Launch', '程序启动')
 
-  // console.log(router)
-
+  checkUpdate()
+  
   const tokenStore = useTokenStore()
+  const init = useInitStore()
+  const etcStore = useEtcStore()
+  // 第一次进app
+  // console.log(init.isInit);
+  
+  if(!init.isInit) {
+    uni.reLaunch({
+        url: '/pages/login/login',
+      })
+    return
+  }
+  
+  console.log(router?.path);
 
+  etcStore.getAc()
   // 存在token
   if (tokenStore?.token?.accessToken) {
     if (router?.path?.includes('/login/login')) {
@@ -25,6 +40,7 @@ onLaunch(async (router) => {
     }
   } else {
     if (!router?.path?.includes('/login/login')) {
+     
       uni.reLaunch({
         url: '/pages/login/login',
       })
@@ -41,6 +57,7 @@ onHide(() => {
 })
 </script>
 <style lang="scss">
+/* #ifndef APP-NVUE */
 @import '@/static/iconfont.css';
 .text-color-primary {
   color: #007aff;
@@ -138,7 +155,14 @@ uni-button[size='mini'] {
 .scolor{
   color: $uni-color-success;
 }
+.bg-pric{
+  background-color: $uni-color-primary;;
+}
+.bg-scolor{
+  background-color: $uni-color-success;
+}
 .text-danger{
   color: $uni-color-error;
 }
+/* #endif */
 </style>

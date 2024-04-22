@@ -34,6 +34,12 @@ export const ORDERCHARGETYPELIST  = [
   }
 ]
 
+export const ORDERCHARGETYPELISTLABEL = {
+  1: "现金",
+  2: "移动",
+  3: "ETC",
+  4: "小程序",
+}
 
 export const ORDER_COMMONICON = {
   ["散客"]: orderSanke,

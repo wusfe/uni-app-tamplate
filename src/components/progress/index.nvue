@@ -1,0 +1,53 @@
+<template>
+  <view class="progress-wrap">
+    <div class="progress-mask"></div>
+    <view class="progerss-content">
+      <text>新版本下载中，请稍等</text>
+      <progress
+        :percent="'80'"
+        font-size="24rpx"
+        border-radius="44rpx"
+        activeColor="#D52424"
+        show-info
+        stroke-width="10"
+      ></progress>
+    </view>
+  </view>
+</template>
+
+<script setup lang="ts"></script>
+
+<style scoped>
+
+.progress-wrap {
+  position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 999;
+    display: block;
+}
+.progress-mask{
+  position: fixed;
+    z-index: 999;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+ .progerss-content{
+  position: fixed;
+    z-index: 999;
+    width: 80%;
+    max-width: 300px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff;
+    text-align: center;
+    border-radius: 3px;
+    overflow: hidden;
+ }
+</style>

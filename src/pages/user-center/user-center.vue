@@ -8,7 +8,7 @@
         >
           <view>
             <view class="text-xl mb-1">{{ userStore?.profile?.realName }}</view>
-            <view>技术研发部-产品</view>
+            <view>{{ userStore?.profile?.orgName }}</view>
           </view>
 
           <view>
@@ -62,18 +62,21 @@
           <i class="zhfont zh-wocanyu color-#007aff text-40rpx mr-3"></i>
           <text>我参与的审批</text>
         </view>
-
         <uni-icons type="right" size="18" />
       </view>
-
-
     </view>
 
 
-    
-    <view class="mx-4 px-2 mt-8">
+   <view class="mt-8">
+    <view class="mx-4 px-2 ">
+      <button type="primary" @click="handleUpdatePassword" plain>修改密码</button>
+    </view>
+
+    <view class="mx-4 px-2 mt-4">
       <button type="primary" @click="handleLogout">退出登录</button>
     </view>
+   </view>
+
   </view>
 </template>
 
@@ -93,6 +96,12 @@ const handleLogout = () => {
   tokenStore.clearToken()
   uni.reLaunch({
     url: '/pages/login/login'
+  })
+}
+
+const handleUpdatePassword = () => {
+  uni.navigateTo({
+    url: '/pages/update-password/update-password'
   })
 }
 </script>

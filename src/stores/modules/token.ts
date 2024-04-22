@@ -1,11 +1,11 @@
-
 import { defineStore } from 'pinia'
 import { useUserStore } from './user'
 import { ref } from 'vue'
+import { useInitStore } from './init'
 
-interface TokenProps{
-  accessToken:string,
-  refreshToken:string
+interface TokenProps {
+  accessToken: string
+  refreshToken: string
 }
 
 // 定义 Store
@@ -19,13 +19,14 @@ export const useTokenStore = defineStore(
     const setToken = (val: TokenProps) => {
       token.value = val
     }
-    
-  
+
     // 清理会员信息，退出时使用
     const clearToken = () => {
-      const userStore = useUserStore();
-      userStore.clearProfile()
+      const userStore = useUserStore()
+      const initStore = useInitStore()
 
+      userStore.clearProfile()
+      initStore.setInit(false)
       token.value = undefined
     }
 

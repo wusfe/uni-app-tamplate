@@ -66,5 +66,11 @@ export const goodsturnoverOut= async (data?:any) => http<any>({
   method: 'POST',
   data
 })
+// 领用申请
+export const goodsturnoverUpdateState= async (data?:any) => http<any>({
+  url: "/api/goodsturnover/updateState",
+  method: 'POST',
+  data
+})
 
 

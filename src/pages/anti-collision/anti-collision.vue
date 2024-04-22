@@ -1,101 +1,141 @@
 <template>
-  <view>
-    <map id="map" style="width: 100%; height: 300px" :longitude="longitude" :latitude="latitude">
-    </map>
-    <view class="location-info px-4">
-      <view>当前纬度: {{ latitude }}</view>
-      <view>当前经度: {{ longitude }}</view>
-    </view>
-    
-    <!-- <button @click="getLocation">获取位置信息</button>
-    <button @click="getLocation2">获取位置信息2</button> -->
+	<view class="content">
+		<view class="">
 
-    <!-- <button @click="qrcode">232</button> -->
-    <button @click="getLocation">重新定位</button>
-  </view>
+		</view>
+		<button @tap="xuanweizhi" style="margin-top: 160px;">选取位置</button>
+		<view class="dqwz" v-if="name">
+			当前位置: {{name}}
+		</view>
+		<view class="dqwz" v-if="name" style="margin-top: 20px;">
+			lng: {{lng}}
+		</view>
+		<view class="dqwz" v-if="name" style="margin-top: 20px;">
+			lat: {{lat}}
+		</view>
+		<sylj-selectLocation ref="selectLocationPop" @ok="selectedOk"></sylj-selectLocation>
+	</view>
 </template>
-<script setup lang="ts">
-// @ts-nocheck
-import permision from '@/utils/permission'
 
-import { onLoad, onReady } from '@dcloudio/uni-app'
-import { ref } from 'vue'
+<script>
+import syljSelectLocation from '@/components/sylj-selectLocation/sylj-selectLocation.vue'
+	export default {
 
-const longitude = ref()
-const latitude = ref()
+		data() {
+			return {
+				name: "",
 
-const qrcode = () => {
-  uni.scanCode({
-	scanType: ['qrCode'],
-	success: function (res) {
-		console.log('条码类型：' + res.scanType);
-		console.log('条码内容：' + res.result);
+				lng: "",
+				lat: ""
+			}
+		},
+    components: {
+			'sylj-selectLocation ': syljSelectLocation
+		},
+		onLoad() {
+			uni.getLocation({
+				type: 'wgs84',
+				success: (res) => {
+					uni.hideLoading();
+					console.log('当前位置的经度：' + res.longitude);
+					console.log('当前位置的纬度：' + res.latitude);
+
+					this.$refs.selectLocationPop.open(res.longitude, res.latitude,
+						'057c65b9e8b00af50de273fa640471f3');
+
+				},
+				fail: function(err) {
+					console.log('获取失败');
+					uni.hideLoading();
+
+				},
+
+			});
+		},
+		methods: {
+			selectedOk(data) {
+				console.log(data)
+				this.ismap = false
+				this.name = data.name
+				this.lng = data.location.lon
+				this.lat = data.location.lat
+			},
+			xuanweizhi() {
+				var that = this;
+				// if (that.lng) {
+
+				// 	that.$refs.selectLocationPop.open(that.lng, that.lat, '********');
+				// } else {
+				// 	that.$refs.selectLocationPop.open(121, 32, '*****');
+				// }
+
+				/*uni.showLoading({
+					//content: '',
+					mask: true
+				})
+				uni.getLocation({
+					type: 'wgs84',
+					success: function(res) {
+						uni.hideLoading();
+						console.log('当前位置的经度：' + res.longitude);
+						console.log('当前位置的纬度：' + res.latitude);
+						 that.$refs.selectLocationPop.open( res.longitude,res.latitude,'******');  
+				
+					},
+					fail: function(err) {
+						console.log('获取失败');
+						uni.hideLoading();
+						 
+					},
+				
+				});*/
+				uni.getLocation({
+					type: 'wgs84',
+					success: function(res) {
+						uni.hideLoading();
+						console.log('当前位置的经度：' + res.longitude);
+						console.log('当前位置的纬度：' + res.latitude);
+						that.$refs.selectLocationPop.open(res.longitude, res.latitude,
+							'057c65b9e8b00af50de273fa640471f3');
+
+					},
+					fail: function(err) {
+						console.log('获取失败');
+						uni.hideLoading();
+
+					},
+
+				});
+
+			},
+		}
 	}
-});
-}
-const doGetLocation = () => {
-  uni.getLocation({
-    type: 'gcj02',
-    success: (res) => {
-      latitude.value = res.latitude
-      longitude.value = res.longitude
-      // this.markers[0].latitude = res.latitude;
-      // this.markers[0].longitude = res.longitude;
-    },
-    fail: (err) => {
-      console.log('获取位置失败', err)
-    },
-  })
-}
-// const getLocation2 = () => {
-//   uni.chooseLocation({
-//     success: (res) => {
-//       ;(this.hasLocation = true),
-//         (this.location = formatLocation(res.longitude, res.latitude)),
-//         (this.locationAddress = res.address)
-//     },
-//   })
-// }
-
-const getLocation = async () => {
-  const result = await permision.requestAndroidPermission('android.permission.ACCESS_FINE_LOCATION')
-  if (result == -1) {
-    uni.showModal({
-      title: '定位权限申请',
-      content: '是否允许开启设备定位权限功能？',
-      success: (res) => {
-        if (res.confirm) {
-          permision.gotoAppPermissionSetting('android.permission.ACCESS_FINE_LOCATION')
-        }
-      },
-    })
-  } else {
-    uni.getLocation({
-      type: 'gcj02',
-      success: (res) => {
-        latitude.value = res.latitude
-        longitude.value = res.longitude
-        //  markers[0].latitude = res.latitude;
-        //   markers[0].longitude = res.longitude;
-
-        // uni.openLocation({
-        //   latitude: latitude.value,
-        //   longitude: longitude.value,
-        //   success: function () {
-        //     console.log('success')
-        //   },
-        // })
-      },
-      fail: (err) => {
-        console.log('获取位置失败', err)
-      },
-    })
-  }
-}
-
-onReady(() => {
-  getLocation()
-})
 </script>
 
-<style scoped></style>
+<style>
+	.content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.logo {
+		height: 200rpx;
+		width: 200rpx;
+		margin-top: 200rpx;
+		margin-left: auto;
+		margin-right: auto;
+		margin-bottom: 50rpx;
+	}
+
+
+	.dqwz {
+		width: 90%;
+		margin: 0 auto;
+		margin-top: 50px;
+		text-align: left;
+		font-size: 14px;
+		color: #666666;
+	}
+</style>

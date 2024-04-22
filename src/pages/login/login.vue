@@ -1,11 +1,11 @@
 <template>
-  <view class="h-100% box-border bg login pt-15">
+  <view class="h-100% box-border bg login pt-140rpx">
     <view class="flex flex-col items-center">
       <view class="text-white font-600 text-8 mb-6"> 智慧轮渡</view>
       <logoLoad class="circle" innerUrl="/static/logo-small.png"/>
       <!-- <image class="w-30 h-30" src="/static/logo.png" mode="aspectFill" /> -->
 
-      <view class="pl-10 pr-10 pt-8 pb-4 w-55 mt-4 rounded-15rpx login-form-item" bg="[rgba(255,255,255,0.3)]">
+      <view class="pl-10 pr-10 pt-8 pb-4 w-55 mt-4 rounded-15rpx login-form-item" >
         <uni-forms ref="form" :modelValue="formValue" :rules="rules">
           <uni-forms-item name="account">
             <uni-easyinput v-model="formValue.account" :inputBorder="false"  placeholder="请输入账号">
@@ -16,14 +16,14 @@
           </uni-forms-item>
 
           <uni-forms-item label="" name="password">
-            <uni-easyinput v-model="formValue.password"  :inputBorder="false"  placeholder="请输入密码">
+            <uni-easyinput v-model="formValue.password"  :inputBorder="false" type="password"  placeholder="请输入密码">
               <template #left>
                 <i class="i-ep:lock text-6 color-white"></i>
               </template>
             </uni-easyinput>
           </uni-forms-item>
 
-          <uni-forms-item label="" name="">
+          <uni-forms-item label="" name="" class="mt-66rpx">
             <button type="primary" @click="submit()">登录</button>
           </uni-forms-item>
         </uni-forms>
@@ -45,7 +45,7 @@ import { postLoginApi, getUserBaseInfo } from '@/api';
 import  {sm2} from 'sm-crypto'
 import logoLoad from '@/components/circle-load/index.vue';
 import { ref } from 'vue';
-import { useTokenStore, useUserStore } from '@/stores'
+import { useInitStore, useTokenStore, useUserStore } from '@/stores'
   const publicKey = `0484C7466D950E120E5ECE5DD85D0C90EAA85081A3A2BD7C57AE6DC822EFCCBD66620C67B0103FC8DD280E36C3B282977B722AAEC3C56518EDCEBAFB72C5A05312`;
 
 
@@ -73,24 +73,26 @@ const formValue = ref({
 })
 
 const tokenStore = useTokenStore()
-
+const init = useInitStore()
 const form = ref()
 const submit = async () => {
 
-  uni.showLoading()
-  await form.value.validate()
-
+  
+  try {
+    await form.value.validate()
+    uni.showLoading({
+      title:'登陆中',
+    })
 
   const result = await postLoginApi({
     ...formValue.value,
     // @ts-ignore
     password: sm2.doEncrypt(formValue.value.password, publicKey, 1)
-
-
   })
 
   if(result.code === 200) {
     tokenStore.setToken(result.result)
+    init.setInit(true)
   }
 
   uni.hideLoading();
@@ -103,10 +105,9 @@ const submit = async () => {
   const userStore = useUserStore();
   const userInfo = await getUserBaseInfo();
   userStore.setUserInfo(userInfo?.result)
+  }finally{
 
-  
- 
-  
+  }
 
 }
 
@@ -128,7 +129,7 @@ const submit = async () => {
   .uni-easyinput__content {
     background-color: transparent !important;
     border-color: transparent !important;
-    border-bottom: 1px solid #ffffff !important;
+    border-bottom: 1px solid rgba(255,255,255,0.3) !important;
     padding: 8rpx 0;
     input {
       color: #ffffff;
@@ -153,9 +154,12 @@ const submit = async () => {
   height: 62.5rpx;
 
 }
-
+.login-form-item {
+  background-color: rgba(255,255,255,0.3);
+}
 .login-form-item :deep(.uni-easyinput__content){
   background-color:transparent!important;
+  // background-color:transparent!important;
   
 }
 </style>

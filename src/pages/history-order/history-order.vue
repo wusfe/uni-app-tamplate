@@ -4,7 +4,7 @@
       <view class="flex bg-#ffffff">
         <dropDownBox class="grow-1 pl-4 pr-4">
           <template v-slot:top>
-              <view class=" position-absolute right-0 top-20rpx right-16rpx flex justify-center items-center" @click="showSearchPopup">
+              <view class=" position-absolute right-0 top-26rpx right-16rpx flex justify-center items-center" @click="showSearchPopup">
                 <text class="text-sm mr-1">筛选</text>
                 <i class="zhfont zh-shaixuan text-sm" ></i>
                 </view>
@@ -48,21 +48,57 @@
             <uni-icons :type="v.visible?'up':'down'" color="" size="16" @click="v.visible = !v.visible" />
           </view>
 
-          <view class="mb-2" >
-            <view class="flex">
-              <view class="w-168rpx"
-                ><text class="text-color-#606266 text-sm">订单类型：</text></view
-              >
-              <view><text class="text-sm">{{ v.orderType }}</text></view>
+          <view class="mb-2">
+            <view class="flex justify-between">
+              <view class="flex flex-col">
+                <view class="flex mb-2">
+                  <view class="w-168rpx"
+                    ><text class="text-color-#606266 text-sm">订单类型：</text></view
+                  >
+                  <view
+                    ><text class="text-sm">{{ v.orderType }}</text></view
+                  >
+                </view>
+
+                <view class="flex">
+                  <view class="w-168rpx"
+                    ><text class="text-color-#606266 text-sm">总金额：</text></view
+                  >
+                  <view
+                    ><text class="text-sm text-color-primary font-900"
+                      >{{ $tranNumber(v?.orderTotalPrice) }}元</text
+                    ></view
+                  >
+                </view>
+              </view>
+
+              <view class="flex flex-col">
+                <view class="flex mb-2">
+                  <view class="w-130rpx"
+                    ><text class="text-color-#606266 text-sm">车牌号：</text></view
+                  >
+                  <view
+                    ><text class="text-sm">{{ v.orderCarNumber }}</text></view
+                  >
+                </view>
+
+                <view class="flex">
+                  <view class="w-140rpx"
+                    ><text class="text-color-#606266 text-sm">收费类型：</text></view
+                  >
+                  <view
+                    ><text class="text-sm">{{ ORDERCHARGETYPELISTLABEL[v?.orderChargeType] }}</text></view
+                  >
+                </view>
+              </view>
             </view>
           </view>
 
-          <view class="flex justify-between items-center" v-if="v.visible" >
-            <view class="flex">
-                <view  class="w-168rpx"><text class="text-color-#606266 text-sm">总金额：</text></view>
-                <view><text class="text-sm text-color-primary font-900">{{ $tranNumber(v?.orderTotalPrice) }}元</text></view>
-            </view>
-           
+          <view class="flex mb-2">
+            <view class="w-168rpx"><text class="text-color-#606266 text-sm">购买时间：</text></view>
+            <view
+              ><text class="text-sm">{{ v.orderBuyTime }}</text></view
+            >
           </view>
 
           <view  class="flex justify-end items-center">
@@ -94,7 +130,7 @@ import { useOrderStore } from '@/stores'
 import moment from 'moment';
 import { getOrderinforList } from '@/api';
 import { watch } from 'vue';
-
+import { ORDERCHARGETYPELISTLABEL } from '@/consts'
 
 const orderStore = useOrderStore()
 

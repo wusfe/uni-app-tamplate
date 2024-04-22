@@ -37,22 +37,55 @@
             <view class="flex justify-between items-center">
               <view class="color-gray-4">船号：{{ v?.shipCode }}</view>
               
-              <view class="color-gray-4">状态：到达
+              <view class="color-gray-4">状态：
+                <text :class="{pric: v?.shipState, 'text-danger': !v?.shipState}">{{ v?.shipState || '离港' }}</text>
                 
                 <!-- <text class="text-sm scolor" v-if="v?.shipState">运行中</text>
               <text class="text-sm text-danger" v-if="!v?.shipState">停运</text> -->
               </view>
             </view>
 
-            <view class="flex items-center justify-around mt-4">
+            <view class="flex items-center mt-4">
              
               <view class="w-100rpx h-100rpx bg-#12C11D rounded-50% mb-2 flex justify-center items-center">
                   <i class="zhfont zh-Ship- color-#ffffff  text-56rpx"></i>
                 </view>
 
 
-                <view class="" >
-                  <button type="primary" size="mini" plain class="block" style="border-radius: 30rpx;padding: 0rpx 60rpx" @click="handleArrive(v)">到达</button>
+                <view class="ml-40rpx" >
+                  <!-- 到港 -->
+                    <template v-if="v?.shipState">
+                      <!-- 如果车道到存在 则另外一个港口不可点击 -->
+                      <view class="flex items-center">
+                        <button  type="primary" :disabled="v?.shipNumber === 2" size="mini" plain class="block mr-20rpx" style="border-radius: 30rpx;padding: 0rpx 40rpx" @click="handleLeave(v)">{{v?.shipNumber === 1?'离港':'到港'}}1</button>
+                      <button type="primary"  :disabled="v?.shipNumber === 1" size="mini" plain class="block mr-20rpx" style="border-radius: 30rpx;padding: 0rpx 40rpx" @click="handleLeave(v)">{{v?.shipNumber === 2?'离港':'到港'}}2</button>
+
+                      <uni-icons
+
+                        class="mr-28rpx"
+                        type="staff"
+                        color=""
+                        size="28"
+
+                        @click="handleAddPerson(v)"
+                      />
+                      <auth-btn @click="handleCarCode" ac="orderinfor:check">
+                        <uni-icons type="scan" color="" size="28" ></uni-icons>
+                        </auth-btn>
+                      
+
+                      </view>
+                    </template>
+                  
+                    <!-- 离港 -->
+                    <template v-if="!v?.shipState">
+                      <button type="primary" size="mini" plain class="block mr-20rpx" style="border-radius: 30rpx;padding: 0rpx 40rpx" @click="handleArrive(v, 1)">到港1</button>
+                      <button type="primary" size="mini" plain class="block mr-20rpx" style="border-radius: 30rpx;padding: 0rpx 40rpx" @click="handleArrive(v, 2)">到港2</button>
+                    </template> 
+
+                  <!-- <button type="primary" size="mini" plain class="block mr-30rpx" style="border-radius: 30rpx;padding: 0rpx 40rpx" @click="handleArrive(v, 1)">到达1</button>
+
+                  <button type="primary" size="mini" plain class="block" style="border-radius: 30rpx;padding: 0rpx 40rpx" @click="handleArrive(v, 2)">到达2</button> -->
                 </view>
               
             </view>
@@ -61,14 +94,24 @@
       </mc-uni>
     </view>
   </view>
+
+  <qrPopup ref="qrPopupRef"></qrPopup>
+
+
+  <uni-popup ref="inputDialog" type="dialog">
+				<popupDialog ref="inputClose"  mode="input" inputType="number"  title="输入人数" value="对话框预置提示内容!"
+					placeholder="请输入人数" @confirm="dialogInputConfirm"></popupDialog>
+			</uni-popup>
+
 </template>
 
 <script setup lang="ts">
 import { onLoad, onPageScroll, onReachBottom } from '@dcloudio/uni-app'
 import { ref, computed } from 'vue'
 import { sleep, useMescroll } from '@/composables'
-import { peopleandcarnumberAdd, shipinforPage } from '@/api';
-
+import { peopleandcarnumberAdd, shipinforPage, shipinforUpdate, updateePeoplenumber } from '@/api';
+import popupDialog from '@/components/popup-dialog/popup-dialog.vue'
+import qrPopup from '@/components/qr-popup/index.vue'
 const searchInput = ref({
   
 })
@@ -86,7 +129,7 @@ const upOptions = ref({
   isBoth: false,
   page: {
     num: 0, // 当前页码,默认0,回调之前会加1,即callback(page)会从1开始
-    size: 10, // 每页数据的数量
+    size: 30, // 每页数据的数量
     time: null, // 加载第一页数据服务器返回的时间; 防止用户翻页时,后台新增了数据从而导致下一页数据重复;
   },
   noMoreSize: 5,
@@ -152,10 +195,13 @@ const downCallback = async (ms: any) => {
   ms?.resetUpScroll()
 }
 
-const handleArrive = (v:any) => {
+const handleArrive = (v:any, carNumber:number) => {
   peopleandcarnumberAdd({
-    shipCode: v?.shipCode
+    shipCode: v?.shipCode,
+    shipRoadCode: carNumber
   }).then(res => {
+    v.shipNumber = carNumber
+    v.shipState ='到港'
     uni.showToast({
       title: '操作成功'
     })
@@ -165,6 +211,49 @@ const handleArrive = (v:any) => {
 const handleTo = () => {
   uni.navigateTo({
     url:'/pages/mancar-manage/mancar-manage',
+  })
+}
+
+const handleLeave = (v:any) => {
+  v.shipNumber = null
+  v.shipState = null
+  shipinforUpdate(v).then(res => {
+    uni.showToast({
+      title: '操作成功'
+    })
+  })
+}
+
+
+const qrPopupRef = ref()
+const handleCarCode = () => {
+  console.log(qrPopupRef);
+  
+  // console.log( qrPopupRef.value.ETC);
+  
+  qrPopupRef.value.ETC()
+}
+
+const inputDialog = ref()
+
+const selectItem = ref()
+const handleAddPerson = (v:any) => {
+
+  inputDialog.value.open()
+
+  selectItem.value = v;
+}
+
+const dialogInputConfirm = (v:any) => {
+  
+  updateePeoplenumber({
+    shipCode: selectItem.value.shipCode,
+    peopleNumber: v
+  }).then(res => {
+    // selectItem.value.shipNumber = v
+    uni.showToast({
+      title: '添加成功'
+    })
   })
 }
 </script>

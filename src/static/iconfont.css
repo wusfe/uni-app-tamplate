@@ -1,7 +1,7 @@
 @font-face {
   font-family: "zhfont"; /* Project id 4490099 */
-  src:  url('iconfont.ttf?t=1713145434110') format('truetype');
-      
+  src: url('iconfont.ttf?t=1713773631119') format('truetype');
+       
 }
 
 .zhfont {
@@ -10,6 +10,18 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.zh-xinmima1:before {
+  content: "\e675";
+}
+
+.zh-querenmima:before {
+  content: "\e613";
+}
+
+.zh-etc:before {
+  content: "\e661";
 }
 
 .zh-yiheyan:before {

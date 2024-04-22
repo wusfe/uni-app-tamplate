@@ -113,7 +113,7 @@
 
 
               <view class="text-right">
-                <button type="primary" plain size="mini" class="mr-2">补货</button>
+                <button type="primary" plain size="mini" class="mr-2" @click="handleAdd(v)">补货</button>
                 <button type="primary" plain size="mini" class="mr-2" @click="handleToDetail(v)">详情</button>
                 <button type="primary" plain size="mini" @click="handleToEdit(v)">编辑</button>
               </view>
@@ -282,6 +282,13 @@ const upCallback = async (ms: any) => {
 const downCallback = async (ms: any) => {
   isUp.value = true
   ms?.resetUpScroll()
+}
+
+
+const handleAdd = (v:any) => {
+ 
+
+  uni.navigateTo({ url: `/pages/store-purchase/store-purchase?id=${v.id}` })
 }
 </script>
 

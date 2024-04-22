@@ -60,7 +60,7 @@
       </view>
 
       <view class="mt-3">
-        <stepBar :stepList="list2" :step="3" />
+        <!-- <stepBar :stepList="list2" :step="3" /> -->
       </view>
 
       <view class="mt-8">

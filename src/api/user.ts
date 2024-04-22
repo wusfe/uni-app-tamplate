@@ -8,6 +8,13 @@ export const getUserBaseInfo = (data?: any) => {
       data,
     })
   }
+export const sysUserChangePwd = (data?: any) => {
+    return http<any>({
+      method: 'POST',
+      url: '/api/sysUser/changePwd',
+      data,
+    })
+  }
 
   // export const getUserBaseInfo = (data?: any) => {
   //   return http<any>({

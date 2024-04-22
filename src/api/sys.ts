@@ -48,5 +48,13 @@ export const sysNoticeSetRead= (data?: any) => {
       data
     })
   }
+// 获取公告详情
+export const getAppVersion= (data?: any) => {
+    return http<any>({
+      method: 'GET',
+      url: `/api/sysConfig/appVersion`,
+      data
+    })
+  }
 
   

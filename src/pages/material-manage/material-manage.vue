@@ -133,8 +133,8 @@
               </view> -->
 
               <view class="text-right w-100% flex justify-end">
-                 <view class="mr-3"> <button type="primary" size="mini" v-if="v?.turnoverState == 0" class="cbtn ">确认领用</button></view>
-                 <view> <button type="primary" size="mini" plain class="cbtn" @click="handleToDetail(v)">查看详情</button></view>
+                 <view class="mr-3" v-if="v?.turnoverState == 0"> <button type="primary" size="mini"  class="cbtn" @click="handleConfirmUse(v)">确认领用</button></view>
+                 <view v-if="v?.turnoverState == 1"> <button type="primary" size="mini" plain class="cbtn" @click="handleToDetail(v)">查看详情</button></view>
               </view>
             </view>
           </view>
@@ -167,7 +167,7 @@ import { onLoad, onPageScroll, onReachBottom } from '@dcloudio/uni-app'
 import dropDownScrollView from '@/components/drop-down-scroll-view/index.vue'
 import dropDownBox from '@/components/drop-down-scroll-view/drop-down-box.vue'
 import { onNavigationBarButtonTap } from '@dcloudio/uni-app'
-import { getGoodsturnoverList, getSysUserUserList, getGoodsinforgoodsCodeList } from '@/api'
+import { getGoodsturnoverList, getSysUserUserList, getGoodsinforgoodsCodeList, goodsturnoverUpdateState } from '@/api'
 import { useDictStore } from '@/stores'
 
 // const dictStore = useDictStore();
@@ -331,6 +331,17 @@ const  handleToDetail = (v:any) => {
   )
 }
 
+
+const handleConfirmUse = (v:any) => {
+  console.log(v)
+
+  goodsturnoverUpdateState(v).then(res => {
+    uni.showToast({
+      title: '领用成功'
+    })
+    v.turnoverState = 1
+  })
+}
 </script>
 
 <style lang="scss" scoped>

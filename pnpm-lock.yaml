@@ -36,6 +36,7 @@ specifiers:
   '@vue/tsconfig': ^0.4.0
   eslint: ^8.22.0
   eslint-plugin-vue: ^9.3.0
+  ezuikit-js: 8.0.4-beta.1
   mescroll-uni: ^1.3.7
   moment: ^2.30.1
   pinia: 2.0.27
@@ -69,6 +70,7 @@ dependencies:
   '@dcloudio/uni-quickapp-webview': 3.0.0-4000820240401001_vue@3.4.21
   '@dcloudio/uni-ui': 1.5.5
   '@uni-helper/unocss-preset-uni': 0.2.7_watwtvczff4bxunxo6x55ac644
+  ezuikit-js: 8.0.4-beta.1
   mescroll-uni: 1.3.7
   moment: 2.30.1
   pinia: 2.0.27_4avrvl2q2ps4ohrrbmdqibj6mu
@@ -5365,6 +5367,10 @@ packages:
 
   /extend/3.0.2:
     resolution: {integrity: sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==}
+    dev: false
+
+  /ezuikit-js/8.0.4-beta.1:
+    resolution: {integrity: sha512-O/ic8f318gtx1m+RV6FHKTp8XroivJFMd9aDiU+ZoSh4nMa/dqx2fRa2ECmj656J29aiQEKaFOg2uGXpLuSd3Q==}
     dev: false
 
   /fast-deep-equal/3.1.3:

@@ -9,6 +9,15 @@
 		}
 	},
 	"pages": [
+		
+		// {
+		// 	"path": "pages/index/index",
+		// 	"style": {
+		// 		"navigationBarTitleText": "",
+		//         "enablePullDownRefresh": false,
+		//         "navigationStyle" : "custom"
+		// 	}
+		// },
 		{
 			"path": "pages/home/home",
 			"style": {
@@ -266,7 +275,39 @@
 			"style": {
 				"navigationBarTitleText": "视频监控"
 			}
+		},
+		{
+			"path": "pages/auth-fail/auth-fail",
+			"style": {
+				"navigationBarTitleText": "暂无权限"
+			}
+		},
+		{
+			"path": "pages/camera/camera",
+			"style": {
+				"navigationStyle": "custom",
+				"backgroundColor": "#000000"
+			}
+		},
+		{
+			"path": "pages/video-detail/video-detail",
+			"style": {
+				"navigationBarTitleText": "视频详情"
+			}
+		},
+		{
+			"path": "pages/video-lookback/video-lookback",
+			"style": {
+				"navigationBarTitleText": "视频详情"
+			}
+		},
+		{
+			"path": "pages/update-password/update-password",
+			"style": {
+				"navigationBarTitleText": "修改密码"
+			}
 		}
+		
 	],
 	// 设置 TabBar
 	"tabBar": {

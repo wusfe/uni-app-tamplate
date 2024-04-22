@@ -10,10 +10,16 @@
         <!-- <button size="mini" type="primary" plain >登录</button> -->
       </view>
 
-      <view class="flex justify-center items-center text-red-700" @click="handleScanCode(1)">
-        <uni-icons type="scan" color="" size="28"></uni-icons>
-        <text class="ml-1">验票</text>
-      </view>
+     
+      <auth-btn @click="handletick(1)" ac="orderinfor:check">
+        <view class="flex justify-center items-center text-red-700" >
+          <uni-icons type="scan" color="" size="28"></uni-icons>
+          <text class="ml-1">验票</text>
+        </view>
+      </auth-btn>
+        
+     
+      
     </view>
     <!-- 轮播图 -->
 
@@ -100,6 +106,7 @@
           class="mt-3"
           :span="6"
           v-for="(item, index) in menu"
+          v-show="isShow(item.auth)"
           :index="index"
           :key="index"
           @click="handleNavigateTo(item)"
@@ -120,7 +127,7 @@
     <bar-area area="bottom" />
   </view>
 
-  <uni-popup ref="popup"  background-color="#fff" type="bottom" safe-area @maskClick="handlecancelQr">
+  <!-- <uni-popup ref="popup"  background-color="#fff" type="bottom" safe-area @maskClick="handlecancelQr">
     
     <view class="qr-wrap">
 
@@ -132,20 +139,24 @@
       </view>
     </view>
  
-</uni-popup>
+</uni-popup> -->
+
+<qrPopup ref="qrPopupRef"></qrPopup>
+
 
 </template>
 
 <script setup lang="tsx">
 import { useUserStore } from '@/stores'
 import { getNewsNotice, getNumberTask, getUnReadList, getTodayColorAll } from '@/api'
-import { ref } from 'vue'
+import { ref, useSlots } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import qr from '@/components/qr/index.vue'
-import permision from '@/utils/permission'
+import qrPopup from '@/components/qr-popup/index.vue'
+import authBox from '@/components/auth-box/index.vue'
 // 报错
 // import NavigationBar from "@/components/navigation-bar"
 const userStore = useUserStore()
+const qrPopupRef = ref()
 
 const menu = [
   {
@@ -153,75 +164,87 @@ const menu = [
     bg: '#032585EE',
     text: '今日订单',
     url: '/pages/today-order/today-order',
+    auth: 'orderinfor:today'
   },
   {
     icon: <i class="zhfont zh-lishidingdan text-color-white"></i>,
     bg: '#52CC6F',
     text: '历史订单',
     url: '/pages/history-order/history-order',
+    auth: 'orderinfor:page',
   },
   {
     icon: <i class="zhfont zh-yanpiao text-color-white"></i>,
     bg: '#FE7849',
     text: '验票',
-    onClick: () => handleScanCode(2)
+    onClick: () => handletick(2),
+    auth: 'orderinfor:check'
   },
   {
     icon: <i class="zhfont zh-tiaodu1 text-color-white"></i>,
     bg: '#C465E2',
     text: '调度',
-    url: '/pages/dispatch-manage/dispatch-manage'
+    url: '/pages/dispatch-manage/dispatch-manage',
+    auth: 'dispatchinfor:page',
   },
   {
     icon: <i class="zhfont zh-cangkuguanli text-color-white"></i>,
     bg: '#5756D7',
     text: '仓库管理',
     url: '/pages/store-manage/store-manage',
+    auth: 'goodsinfor:page',
   },
   {
     icon: <i class="zhfont zh-shipinjiankong text-color-white"></i>,
     bg: '#FF9502',
     text: '视频监控',
-    url: '/pages/video-manage/video-manage'
+    url: '/pages/video-manage/video-manage',
+    auth: 'videomonitor:page',
   },
   {
     icon: <i class="zhfont zh-caiwuguanli text-color-white"></i>,
     bg: '#5AC8FA',
     text: '财务管理',
     // url: '/pages/finance-manage/finance-manage'
-    url: '/pages/finance-statistics/finance-statistics'
+    url: '/pages/finance-statistics/finance-statistics',
+    auth: 'orderinfor:finance',
   },
   {
     icon: <i class="zhfont zh-gerencheyuan text-color-white"></i>,
     bg: '#FF2D55',
     text: '计人计车',
     // url: '/pages/steamer-arrival/steamer-arrival'
-    url: '/pages/steamer-arrival/steamer-arrival'
+    url: '/pages/steamer-arrival/steamer-arrival',
+    auth: 'peopleandcarnumber:page',
     // url: '/pages/mancar-manage/mancar-manage'
   },
   {
     icon: <i class="zhfont zh-dingdantongji text-color-white"></i>,
     bg: '#00E5FF',
     text: '订单统计',
-    url:'/pages/order-statistics/order-statistics'
+    url:'/pages/order-statistics/order-statistics',
+    auth: 'orderinfor:statistics',
   },
   {
     icon: <i class="zhfont zh-fangpengzhuang text-color-white"></i>,
     bg: '#2585EE',
     text: '防碰撞',
-    url: '/pages/anti-collision/anti-collision'
+    url: '/pages/anti-collision/anti-collision',
+    auth: 'orderinfor:Anticollision',
   },
   {
     icon: <i class="zhfont zh-n text-color-white"></i>,
     bg: '#651FFF',
     text: '通知消息',
-    url: '/pages/more-notice/more-notice'
+    url: '/pages/more-notice/more-notice',
+    auth: 'sysNotice:page',
   },
   {
     icon: <i class="zhfont zh-Ship- text-color-white"></i>,
     bg: '#651FFF',
     text: '渡船营运',
-    url: '/pages/material-manage/material-manage'
+    url: '/pages/material-manage/material-manage',
+    auth: 'taskinfor:page',
   },
   // pages/steamer-arrival/steamer-arrival
 ]
@@ -232,11 +255,16 @@ const handleMore = () => {
   })
 }
 
-const handleTo = (type: string) => {
-  if (type === 'approval') {
-    uni.navigateTo({ url: '/pages/approval/approval' })
-  }
+const isShow = (auth:string) => {
+  console.log(auth);
+  
+  return userStore?.profile?.buttons?.some(item => item === auth)
 }
+// const handleTo = (type: string) => {
+//   if (type === 'approval') {
+//     uni.navigateTo({ url: '/pages/approval/approval' })
+//   }
+// }
 
 const handleUrl = (url:any) => {
   uni.navigateTo({
@@ -283,58 +311,37 @@ const handleNavigateTo = (item:any) => {
   }
 }
 
-const orderNumber = ref()
-
-const open = ref(false)
-
-const popup = ref()
-// 扫码
-const handleScanCode = async (type: 1 | 2) => {
-  const result = await permision.requestAndroidPermission('android.permission.READ_EXTERNAL_STORAGE')
-
- 
-  if (result === -1) {
+const handletick = (type:any) => {
+  if(!userStore?.profile?.buttons?.some(item => item === 'orderinfor:check')){
     uni.showModal({
-      title: '相册读取权限申请',
-      content: '是否允许开启相册读取功能？',
-      success: (res) => {
-        if (res.confirm) {
-          permision.gotoAppPermissionSetting()
-        }
-      },
-    })
-  } else {
-    uni.scanCode({
-      autoDecodeCharset: true,
-      success: function (res) {
-        console.log(res,'res');
-        
-        if(type == 1){
-          uni.navigateTo({
-          url: `/pages/qr-result/qr-result?orderNumber=${res.result}`
-          })
-        }else {
-          orderNumber.value = res.result;
-          popup?.value?.open()
-          open.value = true
-        }
-        
-      },
-    })
+            title:'暂无操作权限',
+            content:'请联系管理员',
+            showCancel:false
+        })
+  }else{
+    qrPopupRef.value.open(type)
   }
 }
-const handlecancelQr = () => {
-  console.log(11);
+
+// const handleImage = (url:any) => {
+//   console.log(222, url);
   
-  popup?.value?.close()
-          open.value = false
-}
+// }
 
 onLoad(async () => {
   noticeFn()
   taskNumFn()
   unReadFn()
   todayColorFn()
+
+  // let pages = getCurrentPages();
+	// 		let current = pages[pages.length - 1]; //上一个页面
+
+  //     (current as any).setImage = (url:any) => {
+  //       handleImage(url)
+  //     }
+
+
 })
 </script>
 
