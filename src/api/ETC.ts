@@ -1,8 +1,8 @@
 import { http } from '@/utils/http'
 
 // 分页查询仓库管理
-const AK = "Bmbn5LApE3QWzpoNGT1xWpiv"
-				const SK = "grN1BVlfBX2B1wEunTgeqv3sdYuklQfJ"
+const AK = "MZTKujiXyZxEKrxrld2NH8Ut"
+				const SK = "G5obupDFiEuI9Zs4HDVaJZcq34xN5hCC"
 export const getBaiDuAccessToken = (data?: any) => {
     return http<any>({
       method: 'POST',

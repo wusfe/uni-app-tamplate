@@ -16,7 +16,7 @@
       >
         <view class="w-200rpx flex items-center">
           <i class="zhfont zh-etc font-size-50rpx color-#ffffff"></i>
-          <text class="color-#ffffff font-size-40rpx ml-20rpx">ETC</text>
+          <text class="color-#ffffff font-size-40rpx ml-20rpx">车牌号</text>
         </view>
       </view>
     </view>

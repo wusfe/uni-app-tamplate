@@ -41,7 +41,7 @@ import syljSelectLocation from '@/components/sylj-selectLocation/sylj-selectLoca
 					console.log('当前位置的纬度：' + res.latitude);
 
 					this.$refs.selectLocationPop.open(res.longitude, res.latitude,
-						'057c65b9e8b00af50de273fa640471f3');
+						'13078c561bcc74e8444fce41f89fcf94');
 
 				},
 				fail: function(err) {
@@ -96,8 +96,8 @@ import syljSelectLocation from '@/components/sylj-selectLocation/sylj-selectLoca
 						console.log('当前位置的经度：' + res.longitude);
 						console.log('当前位置的纬度：' + res.latitude);
 						that.$refs.selectLocationPop.open(res.longitude, res.latitude,
-							'057c65b9e8b00af50de273fa640471f3');
-
+							'13078c561bcc74e8444fce41f89fcf94');
+							
 					},
 					fail: function(err) {
 						console.log('获取失败');

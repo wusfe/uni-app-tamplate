@@ -150,7 +150,7 @@
 import { useUserStore } from '@/stores'
 import { getNewsNotice, getNumberTask, getUnReadList, getTodayColorAll } from '@/api'
 import { ref, useSlots } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onShow } from '@dcloudio/uni-app'
 import qrPopup from '@/components/qr-popup/index.vue'
 import authBox from '@/components/auth-box/index.vue'
 // 报错
@@ -328,10 +328,16 @@ const handletick = (type:any) => {
   
 // }
 
-onLoad(async () => {
-  noticeFn()
-  taskNumFn()
+onShow(() => {
   unReadFn()
+  taskNumFn()
+  noticeFn()
+})
+
+onLoad(async () => {
+  // noticeFn()
+  // taskNumFn
+  // unReadFn()
   todayColorFn()
 
   // let pages = getCurrentPages();

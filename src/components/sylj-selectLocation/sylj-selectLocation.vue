@@ -191,8 +191,6 @@
 
 				//this.initEcharts()
 			} else {
-				console.log(2, this.option.apikey)
-				
 				////console.log('init00')
 				if (this.option&&this.option.apikey) {
 					const script = document.createElement('script')
