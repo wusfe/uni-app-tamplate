@@ -34,7 +34,7 @@
         <view @click="handlecancelQr">关闭</view>
       </view>
       <view class="grow-1 overflow-y-auto min-h-0">
-        <qr v-if="open" :order-number="orderNumber" />
+        <qr v-if="open" :order-number="orderNumber" :isRefund="props.isRefund"/>
       </view>
     </view>
   </uni-popup>
@@ -57,10 +57,12 @@ const open = ref(false)
 
 const props = withDefaults(
   defineProps<{
-    qrt?: 1 | 2
+    qrt?: 1 | 2,
+    isRefund?: boolean
   }>(),
   {
     qrt: 1,
+    isRefund: false
   },
 )
 
@@ -89,7 +91,7 @@ const handleScanCode = async (type: 1 | 2) => {
           handleMask()
 
           uni.navigateTo({
-            url: `/pages/qr-result/qr-result?orderNumber=${res.result}`,
+            url: `/pages/qr-result/qr-result?orderNumber=${res.result}&isRefund=${props.isRefund}`,
           })
         } else {
           popup?.value?.close()
@@ -123,6 +125,15 @@ const handleETC = async () => {
     handleMask()
 
     const app = getApp<any>()
+
+    app.globalData.hidepopup2 = () => {
+      if(openType.value == 1){
+        uni.navigateBack()
+      }else{
+        handlecancelQr()
+      }
+      
+    }
 
     app.globalData.setImage = (url: string) => {
      
@@ -215,7 +226,7 @@ const getEtcCode = (imageUrl: any, url: any) => {
       console.log(error)
     },
     complete:()=>{
-      // uni.hideLoading()
+      uni.hideLoading()
     },
   }
 
@@ -225,7 +236,7 @@ const getEtcCode = (imageUrl: any, url: any) => {
 
 const openType = ref(props.qrt || 1)
 
-const openPopup = (type: 1 | 2) => {
+const openPopup = (type: 1 | 2 = 1) => {
   animation.value = true
   uni.hideTabBar({
     animation: true,

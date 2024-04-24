@@ -10,16 +10,12 @@
         <!-- <button size="mini" type="primary" plain >登录</button> -->
       </view>
 
-     
       <auth-btn @click="handletick(1)" ac="orderinfor:check">
-        <view class="flex justify-center items-center text-red-700" >
+        <view class="flex justify-center items-center text-red-700">
           <uni-icons type="scan" color="" size="28"></uni-icons>
           <text class="ml-1">验票</text>
         </view>
       </auth-btn>
-        
-     
-      
     </view>
     <!-- 轮播图 -->
 
@@ -52,7 +48,10 @@
     <view class="pl-3 pr-3 mt-3">
       <uni-card is-full :is-shadow="false" margin="0" padding="0" :border="false">
         <view class="flex pt-4 pb-2">
-          <view class="w-33.33% text-center slide-border" @click="handleUrl('/pages/approval-from-me/approval-from-me')">
+          <view
+            class="w-33.33% text-center slide-border"
+            @click="handleUrl('/pages/approval-from-me/approval-from-me')"
+          >
             <view class="mb-1">
               <uni-badge
                 :is-dot="taskNum > 0"
@@ -106,7 +105,7 @@
           class="mt-3"
           :span="6"
           v-for="(item, index) in menu"
-          v-show="isShow(item.auth)"
+          v-show="isShow(item.auth as any)"
           :index="index"
           :key="index"
           @click="handleNavigateTo(item)"
@@ -141,9 +140,7 @@
  
 </uni-popup> -->
 
-<qrPopup ref="qrPopupRef"></qrPopup>
-
-
+  <qrPopup ref="qrPopupRef" :isRefund="isRefund"></qrPopup>
 </template>
 
 <script setup lang="tsx">
@@ -158,13 +155,14 @@ import authBox from '@/components/auth-box/index.vue'
 const userStore = useUserStore()
 const qrPopupRef = ref()
 
+const isRefund = ref(false)
 const menu = [
   {
     icon: <i class="zhfont zh-jinridingdan1 text-color-white"></i>,
     bg: '#032585EE',
     text: '今日订单',
     url: '/pages/today-order/today-order',
-    auth: 'orderinfor:today'
+    auth: 'orderinfor:today',
   },
   {
     icon: <i class="zhfont zh-lishidingdan text-color-white"></i>,
@@ -178,7 +176,7 @@ const menu = [
     bg: '#FE7849',
     text: '验票',
     onClick: () => handletick(2),
-    auth: 'orderinfor:check'
+    auth: 'orderinfor:check',
   },
   {
     icon: <i class="zhfont zh-tiaodu1 text-color-white"></i>,
@@ -222,7 +220,7 @@ const menu = [
     icon: <i class="zhfont zh-dingdantongji text-color-white"></i>,
     bg: '#00E5FF',
     text: '订单统计',
-    url:'/pages/order-statistics/order-statistics',
+    url: '/pages/order-statistics/order-statistics',
     auth: 'orderinfor:statistics',
   },
   {
@@ -241,10 +239,23 @@ const menu = [
   },
   {
     icon: <i class="zhfont zh-Ship- text-color-white"></i>,
-    bg: '#651FFF',
+    bg: '#CBA43F',
     text: '渡船营运',
     url: '/pages/material-manage/material-manage',
     auth: 'taskinfor:page',
+  },
+  {
+    icon: <i class="zhfont zh-icon text-color-white"></i>,
+    bg: '#347CAF',
+    text: '货牌录入',
+    url: '/pages/add-license/add-license',
+  },
+  {
+    icon: <i class="zhfont zh-tuikuan text-color-white"></i>,
+    bg: '#DE868F',
+    text: '退款',
+    onClick: () => handletick(3),
+    auth: 'orderinfor:delete',
   },
   // pages/steamer-arrival/steamer-arrival
 ]
@@ -255,10 +266,11 @@ const handleMore = () => {
   })
 }
 
-const isShow = (auth:string) => {
-  console.log(auth);
-  
-  return userStore?.profile?.buttons?.some(item => item === auth)
+const isShow = (auth: string) => {
+  if (!auth) {
+    return true
+  }
+  return userStore?.profile?.buttons?.some((item) => item === auth)
 }
 // const handleTo = (type: string) => {
 //   if (type === 'approval') {
@@ -266,9 +278,9 @@ const isShow = (auth:string) => {
 //   }
 // }
 
-const handleUrl = (url:any) => {
+const handleUrl = (url: any) => {
   uni.navigateTo({
-    url
+    url,
   })
 }
 const notice = ref('')
@@ -300,32 +312,33 @@ const taskNumFn = async () => {
   taskNum.value = res?.result || 0
 }
 
-const handleNavigateTo = (item:any) => {
+const handleNavigateTo = (item: any) => {
   if (item.url) {
     uni.navigateTo({
-      url:item.url
+      url: item.url,
     })
   }
-  if(item.onClick){
+  if (item.onClick) {
     item.onClick()
   }
 }
 
-const handletick = (type:any) => {
-  if(!userStore?.profile?.buttons?.some(item => item === 'orderinfor:check')){
+const handletick = (type: any) => {
+  isRefund.value = type == 3
+  if (!userStore?.profile?.buttons?.some((item) => item === 'orderinfor:check')) {
     uni.showModal({
-            title:'暂无操作权限',
-            content:'请联系管理员',
-            showCancel:false
-        })
-  }else{
-    qrPopupRef.value.open(type)
+      title: '暂无操作权限',
+      content: '请联系管理员',
+      showCancel: false,
+    })
+  } else {
+    qrPopupRef.value.open(type == 3 ? 1 : type)
   }
 }
 
 // const handleImage = (url:any) => {
 //   console.log(222, url);
-  
+
 // }
 
 onShow(() => {
@@ -341,13 +354,11 @@ onLoad(async () => {
   todayColorFn()
 
   // let pages = getCurrentPages();
-	// 		let current = pages[pages.length - 1]; //上一个页面
+  // 		let current = pages[pages.length - 1]; //上一个页面
 
   //     (current as any).setImage = (url:any) => {
   //       handleImage(url)
   //     }
-
-
 })
 </script>
 

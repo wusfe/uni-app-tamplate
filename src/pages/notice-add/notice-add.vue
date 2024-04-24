@@ -140,10 +140,15 @@ const handleSubmit = async () => {
 
   sysNoticeAdd(formInput.value).then(res => {
     uni.showToast({
-      title: '添加成功'
+      title: '添加成功',
+      success(){
+        setTimeout(() => {
+          uni.navigateBack()
+        }, 1000)
+      }
     })
 
-    uni.navigateBack()
+    
   })
 }
 

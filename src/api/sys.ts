@@ -57,4 +57,21 @@ export const getAppVersion= (data?: any) => {
     })
   }
 
+export const APPReturnMoney= (outTradeNumber?: any) => {
+    return http<any>({
+      method: 'POST',
+      url: `/api/xcx/APPReturnMoney/${outTradeNumber}`,
+      
+    })
+  }
+// 获取公告详情
+export const AddOperationsCar= (carNumber?: any) => {
+    return http<any>({
+      method: 'POST',
+      url: `/api/xcx/AddOperationsCar/${carNumber}`,
+      
+    })
+  }
+
   
+

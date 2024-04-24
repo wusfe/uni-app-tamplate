@@ -1,5 +1,5 @@
 <template>
-  <qr :order-number="orderNumber"></qr>
+  <qr :order-number="orderNumber" :isRefund="isRefund"></qr>
 </template>
 
 <script setup lang="ts">
@@ -10,9 +10,10 @@ import qr from '@/components/qr/index.vue'
 // 4875446994044766907
 
 const orderNumber = ref()
-
+const isRefund = ref(false)
 onLoad((query: any) => {
   orderNumber.value = query?.orderNumber
+  isRefund.value = query.isRefund === 'true'
   // if (props.orderNumber) {
   //   orderinforDetail({
   //     orderNumber: props.orderNumber,

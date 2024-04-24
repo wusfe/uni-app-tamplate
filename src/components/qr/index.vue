@@ -41,25 +41,36 @@
       </view>
 
       <view class="flex items-baseline mb-2">
+        <text class="color-gray-5 w-136rpx text-align-last-justify">订单金额</text>
+        <text>：</text>
+        <text>{{ detail?.orderTotalPrice }}元</text>
+      </view>
+
+      <view class="flex items-baseline mb-2">
         <text class="color-gray-5 w-136rpx text-align-last-justify">车载重量</text>
         <text>：</text>
         <text>{{ detail?.orderCarLoad }}</text>
       </view>
     </view>
+
+    <view class="mt-80rpx" v-if="props.isRefund">
+      <button type="warn" :disabled="detail?.orderState !== 1"  size="default" @click="handleRefund">{{detail?.orderState === -1? '已退款':'确认退款'}}</button>
+    </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { orderinforDetail, updateCompleteOrder } from '@/api'
+import { APPReturnMoney, orderinforDetail, updateCompleteOrder } from '@/api'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import { ORDERCHARGETYPELISTLABEL, ORDER_COMMONICON } from '@/consts'
 // 4875446994044766907
 
-const props = defineProps(['orderNumber'])
+const props = defineProps(['orderNumber', "isRefund"])
 
 const status = ref()
 const detail = ref()
+
 onLoad((query: any) => {
   if (props.orderNumber) {
     orderinforDetail({
@@ -68,8 +79,8 @@ onLoad((query: any) => {
       detail.value = res?.result
       status.value = res?.result?.orderState
       if (res?.result) {
-        if (res?.result?.orderState == 1) {
-          updateCompleteOrder(props.orderNumber).then((res) => {
+        if (res?.result?.orderState == 1 && !props.isRefund) {
+          updateCompleteOrder(res?.result).then((res) => {
             status.value = 2
             uni.showToast({
               title: '核验成功',
@@ -78,18 +89,39 @@ onLoad((query: any) => {
         }
       } else {
         uni.showModal({
-          title:'提示',
-          content:'暂无此订单',
-          showCancel:false,
-          success:(success)=>{
-            uni.navigateBack()
-          },
+          title: '提示',
+          content: '暂无此订单',
+          showCancel: false,
+          success: (success) => {
+          
 
+            const app = getApp<any>()
+
+            app.globalData.hidepopup2()
+
+          },
         })
       }
     })
   }
 })
+
+const handleRefund = () => {
+  uni.showModal({
+    title: '提示',
+    content: '确认退款吗？',
+    success: (res) => {
+      if (res.confirm) {
+        APPReturnMoney(detail?.value?.orderNumber).then((res) => {
+          detail.value.orderState = -1
+          uni.showToast({
+            title: '操作成功',
+          })
+        })
+      }
+    },
+  })
+}
 </script>
 
 <style scoped>

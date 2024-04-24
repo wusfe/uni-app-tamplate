@@ -9,7 +9,6 @@
 		}
 	},
 	"pages": [
-		
 		// {
 		// 	"path": "pages/index/index",
 		// 	"style": {
@@ -306,8 +305,13 @@
 			"style": {
 				"navigationBarTitleText": "修改密码"
 			}
+		},
+		{
+			"path": "pages/add-license/add-license",
+			"style": {
+				"navigationBarTitleText": "新增货拉拉车牌"
+			}
 		}
-		
 	],
 	// 设置 TabBar
 	"tabBar": {

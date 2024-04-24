@@ -154,7 +154,12 @@
 </template>
 
 <script setup lang="ts">
-import { getSysUserUserList, getGoodsinforgoodsCodeList, addGoodsturnover, getGoodsinforDetail } from '@/api'
+import {
+  getSysUserUserList,
+  getGoodsinforgoodsCodeList,
+  addGoodsturnover,
+  getGoodsinforDetail,
+} from '@/api'
 import { onLoad } from '@dcloudio/uni-app'
 import { watch } from 'vue'
 import { ref } from 'vue'
@@ -234,8 +239,6 @@ const rules = {
 const goodsList = ref([] as any)
 const userList = ref([] as any)
 onLoad((query) => {
-  
-
   getGoodsinforgoodsCodeList().then((res) => {
     goodsList.value = res?.result?.map((item: any) => ({
       text: item.label,
@@ -280,10 +283,13 @@ const handleConfirm = async () => {
 
     uni.showToast({
       title: '添加成功',
-    })
-
-    uni.redirectTo({
-      url:'/pages/store-purchase-record/store-purchase-record',
+      success() {
+       setTimeout(() => {
+        uni.redirectTo({
+          url: '/pages/store-purchase-record/store-purchase-record',
+        })
+       }, 1000)
+      },
     })
   } finally {
     uni.hideLoading()

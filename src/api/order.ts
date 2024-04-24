@@ -46,10 +46,10 @@ export const orderinforDetail= async (data?:any) => http<any>({
 
 
 // 扫描二维码
-export const updateCompleteOrder= async (orderNumber:number) => http<any>({
-  url: `/api/orderinfor/updateComplete/${orderNumber}`,
+export const updateCompleteOrder= async (data:any) => http<any>({
+  url: `/api/orderinfor/updateComplete`,
   method: 'POST',
-  
+  data
 })
 // 财务统计
 export const orderBydateList= async (dt:any) => http<any>({
