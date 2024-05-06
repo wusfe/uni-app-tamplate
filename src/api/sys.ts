@@ -65,11 +65,11 @@ export const APPReturnMoney= (outTradeNumber?: any) => {
     })
   }
 // 获取公告详情
-export const AddOperationsCar= (carNumber?: any) => {
+export const AddOperationsCar= (data?:any) => {
     return http<any>({
       method: 'POST',
-      url: `/api/xcx/AddOperationsCar/${carNumber}`,
-      
+      url: `/api/xcx/AddOperationsCar`,
+      data
     })
   }
 
