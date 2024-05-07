@@ -11,6 +11,7 @@
         </view>
       </view>
       <view
+        v-if="!props.isRefund"
         class="bg-scolor py-30rpx text-center flex justify-center items-center"
         @click="handleETC"
       >
@@ -19,6 +20,18 @@
           <text class="color-#ffffff font-size-40rpx ml-20rpx">车牌号</text>
         </view>
       </view>
+
+      <view
+        v-if="props.showTicket"
+        class="bg-#FE7849 py-30rpx text-center flex justify-center items-center"
+        @click="handleTicketList"
+      >
+        <view class="w-200rpx flex items-center">
+          <i class="zhfont zh-a-5-yidaozhangkaipiao font-size-50rpx color-#ffffff"></i>
+          <text class="color-#ffffff font-size-40rpx ml-20rpx whitespace-nowrap">验票队列</text>
+        </view>
+      </view>
+
     </view>
   </uni-popup>
 
@@ -58,17 +71,22 @@ const open = ref(false)
 const props = withDefaults(
   defineProps<{
     qrt?: 1 | 2,
-    isRefund?: boolean
+    isRefund?: boolean,
+    showTicket: boolean
   }>(),
   {
     qrt: 1,
-    isRefund: false
+    isRefund: false,
+    showTicket: true
   },
 )
 
 const orderNumber = ref()
 
 const handleScanCode = async (type: 1 | 2) => {
+  if(type){
+    openType.value = type
+  }
   const result = await permision.requestAndroidPermission(
     'android.permission.READ_EXTERNAL_STORAGE',
   )
@@ -84,9 +102,17 @@ const handleScanCode = async (type: 1 | 2) => {
       },
     })
   } else {
+    console.log(1);
+    
     uni.scanCode({
-      autoDecodeCharset: true,
+      onlyFromCamera: true,
+      // autoDecodeCharset: true,
+      scanType: ['qrCode'],
+      hideAlbum: true,
+      // autoZoom: false,
       success: function (res) {
+        console.log(2);
+       
         if (openType.value == 1) {
           handleMask()
 
@@ -99,6 +125,13 @@ const handleScanCode = async (type: 1 | 2) => {
           popup2?.value?.open()
           open.value = true
         }
+      },
+      fail:(fail)=>{
+        console.log(fail);
+        
+      },
+      complete(result) {
+          console.log(result)
       },
     })
   }
@@ -254,12 +287,20 @@ const handleMask = () => {
 }
 
 const handlecancelQr = () => {
+ 
   animation.value = false
   popup2?.value?.close()
   open.value = false
   uni.showTabBar()
 }
 
+// 去验票列表
+const handleTicketList = () => {
+  
+  uni.navigateTo({
+    url:'/pages/ticket-list/ticket-list',
+  })
+}
 defineExpose({
   open: openPopup,
   qrcode: handleScanCode,

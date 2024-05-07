@@ -68,7 +68,7 @@ function judgeIosPermissionRecord() {
 	var avaudiosession = plus.ios.import("AVAudioSession");
 	var avaudio = avaudiosession.sharedInstance();
 	var permissionStatus = avaudio.recordPermission();
-	console.log("permissionStatus:" + permissionStatus);
+	// console.log("permissionStatus:" + permissionStatus);
 	if (permissionStatus == 1684369017 || permissionStatus == 1970168948) {
 		console.log("麦克风权限没有开启");
 	} else {
@@ -178,9 +178,6 @@ function requestAndroidPermission(permissionID) {
 					console.log('永久拒绝申请的权限：' + deniedAlwaysPermission);
 					result = -1
 				}
-
-				console.log(result, 1111);
-				
 				resolve(result);
 				// 若所需权限被拒绝,则打开APP设置界面,可以在APP设置界面打开相应权限
 				// if (result != 1) {

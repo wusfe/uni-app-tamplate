@@ -64,3 +64,10 @@ export const orderByMonthList= async (dtmonth:any) => http<any>({
  
 })
 
+
+// 获取已买票订单队列
+export const orderInfoValidList= async (data:any) => http<any>({
+  url: `/api/orderinfor/validList`,
+  method: 'GET',
+  data
+})

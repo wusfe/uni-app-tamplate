@@ -1,6 +1,6 @@
 <template>
   <view class="flex flex-col h-100%">
-    <view class="shrink-0">
+    <!-- <view class="shrink-0">
       <view class="flex bg-#ffffff">
         <dropDownBox class="grow-1 pl-4 pr-4">
           <template v-slot:top>
@@ -23,7 +23,7 @@
           </view>
         </dropDownBox>
       </view>
-    </view>
+    </view> -->
     <!-- 列表 -->
 
     <view class="grow-1 min-h-0">
@@ -45,7 +45,7 @@
               <view><text class="text-sm">{{ v?.orderNumber }}</text></view>
             </view>
 
-            <!-- <uni-icons :type="v.visible?'up':'down'" color="" size="16" @click="v.visible = !v.visible" /> -->
+            <uni-icons :type="v.visible?'up':'down'" color="" size="16" @click="v.visible = !v.visible" />
           </view>
 
           <view class="mb-2">
@@ -111,15 +111,15 @@
 
   </view>
 
-  <searchPopup :search-input="searchInput" @confirm="handleConfirm" ref="rightPopup"  />
+  <!-- <searchPopup :search-input="searchInput" @confirm="handleConfirm" ref="rightPopup"  /> -->
 </template>
 
 <script setup lang="ts">
 import dropDownScrollView from '@/components/drop-down-scroll-view/index.vue'
 import dropDownBox from '@/components/drop-down-scroll-view/drop-down-box.vue'
 
-import searchPopup from './components/search-popup.vue';
-import rangePicker from '@/components/range-picker/index.vue'
+// import searchPopup from './components/search-popup.vue';
+// import rangePicker from '@/components/range-picker/index.vue'
 import { sleep, useMescroll } from '@/composables'
 import { onLoad, onPageScroll, onReachBottom } from '@dcloudio/uni-app'
 
@@ -128,7 +128,7 @@ import { computed, ref, unref } from 'vue'
 import { useOrderStore } from '@/stores'
 
 import moment from 'moment';
-import { getOrderinforList } from '@/api';
+import { orderInfoValidList } from '@/api';
 import { watch } from 'vue';
 import { ORDERCHARGETYPELISTLABEL } from '@/consts'
 
@@ -207,7 +207,7 @@ const upOptions = ref({
 // 控制下拉刷新
 const downOptions = ref({
   top: 0,
-  use: true, // 是否启用下拉刷新; 默认true
+  use: false, // 是否启用下拉刷新; 默认true
   auto: false, // 是否在初始化完毕之后自动执行下拉刷新的回调; 默认true
   autoShowLoading: true, // 如果设置auto=true(在初始化完毕之后自动执行下拉刷新的回调),那么是否显示下拉刷新的进度; 默认false
   // offset: 120,
@@ -230,14 +230,10 @@ const isUp = ref(true)
 // 上拉加载函数
 const upCallback = async (ms: any) => {
   try {
-    const res = await getOrderinforList({
-      page: ms.optUp.page.num,
-      pageSize: ms.optUp.page.size,
-      ...searchInput.value,
-    })
-
-    data.value = isUp.value ? res?.result?.items : data.value.concat(res?.result?.items || [])
-    mescroll.value.endSuccess(res?.result?.items?.length, res?.result?.totalPages)
+    const res = await orderInfoValidList()
+    
+    data.value = isUp.value ? res?.result : data.value.concat(res?.result || [])
+    mescroll.value.endSuccess(res?.result?.length, res?.result?.length)
 
     isUp.value = false
   } catch (_) {

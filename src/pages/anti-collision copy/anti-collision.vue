@@ -11,7 +11,7 @@
     <button @click="getLocation2">获取位置信息2</button> -->
 
     <!-- <button @click="qrcode">232</button> -->
-    <button @click="getLocation">重新定位</button>
+    <!-- <button @click="getLocation">重新定位</button> -->
   </view>
 </template>
 <script setup lang="ts">

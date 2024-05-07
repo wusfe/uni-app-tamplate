@@ -99,7 +99,7 @@
 
 
   <uni-popup ref="inputDialog" type="dialog">
-				<popupDialog ref="inputClose"  mode="input" inputType="number"  title="输入人数" value="对话框预置提示内容!"
+				<popupDialog ref="inputClose"  mode="input" beforeClose inputType="number"  title="输入人数" 
 					placeholder="请输入人数" @confirm="dialogInputConfirm"></popupDialog>
 			</uni-popup>
 
@@ -244,7 +244,20 @@ const handleAddPerson = (v:any) => {
   selectItem.value = v;
 }
 
+const inputClose = ref()
 const dialogInputConfirm = (v:any) => {
+
+ 
+  
+  if(!v){
+    uni.showToast({
+      title:'请输入人数',
+      icon: 'none'
+    })
+    return
+  }
+
+  inputClose.value?.close()
   
   updateePeoplenumber({
     shipCode: selectItem.value.shipCode,

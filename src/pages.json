@@ -311,6 +311,12 @@
 			"style": {
 				"navigationBarTitleText": "新增货拉拉车牌"
 			}
+		},
+		{
+			"path": "pages/ticket-list/ticket-list",
+			"style": {
+				"navigationBarTitleText": "验票队列"
+			}
 		}
 	],
 	// 设置 TabBar

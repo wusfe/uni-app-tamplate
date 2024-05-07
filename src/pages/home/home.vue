@@ -34,6 +34,7 @@
 
       <view class="flex-1">
         <uni-notice-bar
+          :speed="25"
           class="notice"
           single
           scrollable
@@ -140,7 +141,7 @@
  
 </uni-popup> -->
 
-  <qrPopup ref="qrPopupRef" :isRefund="isRefund"></qrPopup>
+  <qrPopup ref="qrPopupRef" :showTicket="showTicket" :isRefund="isRefund"></qrPopup>
 </template>
 
 <script setup lang="tsx">
@@ -323,8 +324,11 @@ const handleNavigateTo = (item: any) => {
   }
 }
 
+const showTicket = ref(true)
 const handletick = (type: any) => {
   isRefund.value = type == 3
+  showTicket.value = type !== 3
+  
   if (!userStore?.profile?.buttons?.some((item) => item === 'orderinfor:check')) {
     uni.showModal({
       title: '暂无操作权限',
@@ -332,7 +336,12 @@ const handletick = (type: any) => {
       showCancel: false,
     })
   } else {
-    qrPopupRef.value.open(type == 3 ? 1 : type)
+    if(type === 3){
+      qrPopupRef.value.qrcode(1)
+    }else{
+      qrPopupRef.value.open(type)
+    }
+    
   }
 }
 

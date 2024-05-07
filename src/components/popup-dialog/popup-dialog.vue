@@ -210,7 +210,7 @@
 			 */
 			closeDialog() {
 				this.$emit('close')
-				if (this.beforeClose) return
+				// if (this.beforeClose) return
 				this.popup.close()
 			},
 			close() {

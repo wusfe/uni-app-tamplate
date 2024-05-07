@@ -83,7 +83,7 @@ export const http = <T>(options: UniApp.RequestOptions) => {
               title: (res.data as Data<T>).message || '请求错误',
             })
 
-            if (code === 403) {
+            if (code === 403 || code === 401) {
               const tokenStore = useTokenStore()
               tokenStore.clearToken()
 

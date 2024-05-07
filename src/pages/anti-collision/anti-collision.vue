@@ -7,10 +7,10 @@
 		<view class="dqwz" v-if="name">
 			当前位置: {{name}}
 		</view>
-		<view class="dqwz" v-if="name" style="margin-top: 20px;">
+		<view class="dqwz"  style="margin-top: 20px;">
 			lng: {{lng}}
 		</view>
-		<view class="dqwz" v-if="name" style="margin-top: 20px;">
+		<view class="dqwz"  style="margin-top: 20px;">
 			lat: {{lat}}
 		</view>
 		<sylj-selectLocation ref="selectLocationPop" @ok="selectedOk"></sylj-selectLocation>
@@ -54,7 +54,7 @@ import syljSelectLocation from '@/components/sylj-selectLocation/sylj-selectLoca
 		},
 		methods: {
 			selectedOk(data) {
-				console.log(data)
+				// console.log(data)
 				this.ismap = false
 				this.name = data.name
 				this.lng = data.location.lon

@@ -1,7 +1,6 @@
 @font-face {
   font-family: "zhfont"; /* Project id 4490099 */
-  src: url('iconfont.ttf?t=1713929804326') format('truetype');
-      
+  src:  url('iconfont.ttf?t=1714976633697') format('truetype');
 }
 
 .zhfont {
@@ -10,6 +9,10 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.zh-a-5-yidaozhangkaipiao:before {
+  content: "\e637";
 }
 
 .zh-tuikuan:before {
