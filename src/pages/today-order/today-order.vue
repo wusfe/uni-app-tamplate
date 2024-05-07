@@ -1,8 +1,8 @@
 <template>
-  <view class="flex flex-col h-100%">
+  <view class="flex flex-col h-100%" @touchstart="handleTouchstart" @touchend="handleTouchend">
     <view class="shrink-0">
       <view class="flex bg-#ffffff">
-        <dropDownBox class="grow-1 pl-4 pr-4">
+        <dropDownBox class="grow-1 pl-4 pr-4" @mask="handleMask">
           <!-- <template v-slot:top>
           <singleBox>
             <view class="mr-4">
@@ -152,7 +152,7 @@ import dropDownScrollView from '@/components/drop-down-scroll-view/index.vue'
 import dropDownBox from '@/components/drop-down-scroll-view/drop-down-box.vue'
 
 import { sleep, useMescroll } from '@/composables'
-import { onLoad, onPageScroll, onReachBottom } from '@dcloudio/uni-app'
+import { onHide, onLoad, onPageScroll, onReachBottom, onShow, onUnload } from '@dcloudio/uni-app'
 
 import { computed, ref, watch } from 'vue'
 import { getOrderinforList, orderTodayLiInfo } from '@/api'
@@ -168,7 +168,7 @@ const searchInput = ref({
   orderBuyTimeEnd: moment().format('YYYY-MM-DD 23:59:59'),
 })
 
-onLoad(() => {
+const getTodayInfo = () => {
   orderTodayLiInfo().then((res) => {
     if (res?.result?.length > 0) {
       const splitNum = Math.ceil(res?.result?.length / 2)
@@ -176,9 +176,73 @@ onLoad(() => {
       todayLiInfo.value[1] = res?.result?.slice(splitNum)
     }
   })
+}
+const timer = ref()
+
+const startTimer = () => {
+  timer.value = setInterval(() => {
+    getTodayInfo()
+    downCallback(mescroll.value)
+   
+  }, 1 * 60 * 1000)
+}
+const startRestartTimer = () => {
+  restartTimer.value = setTimeout(() => {
+    startTimer()
+  }, 3000)
+}
+const restartTimer = ref()
+
+const isActive = ref(false)
+
+const isLoad = ref(false)
+
+onShow(() => {
+ 
+ if(!isLoad.value){
+   setTimeout(() => {
+   isActive.value = true
+   getTodayInfo()
+   downCallback(mescroll.value)
+ }, 0)
+ }
+ 
+})
+
+onLoad(() => {
+
+  isLoad.value = true
+
+  getTodayInfo()
 
   orderStore.getOrderTypeList()
   orderStore.getOrderStateList()
+
+
+  startTimer()
+})
+
+const clearRefresh = () => {
+  clearInterval(timer.value)
+  timer.value = null;
+}
+
+const clearRestartRefresh = () => {
+  clearTimeout(restartTimer.value)
+  restartTimer.value = null;
+}
+
+onHide(() => {
+  isLoad.value = false
+  clearRefresh()
+  clearRestartRefresh()
+  
+})
+
+onUnload(() => {
+  isLoad.value = false
+  clearRefresh()
+  clearRestartRefresh()
 })
 
 // watch(searchInput, (v) => {
@@ -187,6 +251,7 @@ onLoad(() => {
 // },{deep: true})
 
 const handleFinallySelect = (v: any) => {
+  getTodayInfo()
   downCallback(mescroll.value)
 }
 
@@ -218,7 +283,7 @@ const upOptions = ref({
     use: true, // 是否显示空布局
     icon: 'https://www.mescroll.com/img/mescroll-empty.png', // 图标路径
     tip: '~ 暂无相关数据 ~', // 提示
-    btnText: '去逛逛 >', // 按钮
+    btnText: '', // 按钮
     fixed: false, // 是否使用fixed定位,默认false; 配置fixed为true,以下的top和zIndex才生效 (transform会使fixed失效,最终会降级为absolute)
     top: '100rpx', // fixed定位的top值 (完整的单位值,如 "10%"; "100rpx")
     zIndex: 99, // fixed定位z-index值
@@ -258,6 +323,13 @@ const upCallback = async (ms: any) => {
 
     data.value = isUp.value ? res?.result?.items : data.value.concat(res?.result?.items || [])
     mescroll.value.endSuccess(res?.result?.items?.length, res?.result?.totalPages)
+    if(isUp.value){
+      mescroll.value.scrollTo(0 , 45)
+    }
+    if(isActive.value && !isTouchStart.value){
+      startTimer()
+      isActive.value = false
+    }
 
     isUp.value = false
   } catch (_) {
@@ -269,6 +341,38 @@ const upCallback = async (ms: any) => {
 const downCallback = async (ms: any) => {
   isUp.value = true
   ms?.resetUpScroll()
+}
+
+const isTouchStart = ref(false)
+const handleTouchstart = () => {
+  isTouchStart.value = true
+  clearRestartRefresh()
+  clearRefresh()
+}
+
+const isOpen = ref(false)
+const handleTouchend = () => {
+  isTouchStart.value = false
+  clearRestartRefresh()
+  clearRefresh()
+  if(!isOpen.value){
+    startRestartTimer()
+  }
+
+}
+
+const handleMask = (s:boolean) => {
+ 
+  isOpen.value = s
+
+  clearRestartRefresh()
+  clearRefresh()
+
+  if(s){
+   
+  }else {
+    startRestartTimer()
+  }
 }
 </script>
 

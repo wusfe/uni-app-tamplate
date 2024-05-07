@@ -26,6 +26,7 @@ export const useTokenStore = defineStore(
       const initStore = useInitStore()
 
       userStore.clearProfile()
+      // userStore.clearUserLoginInfo()
       initStore.setInit(false)
       token.value = undefined
     }

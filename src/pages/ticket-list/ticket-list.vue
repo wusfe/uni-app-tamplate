@@ -1,5 +1,5 @@
 <template>
-  <view class="flex flex-col h-100%">
+  <view class="flex flex-col h-100%" @touchstart="handleTouchstart" @touchend="handleTouchend">
     <!-- <view class="shrink-0">
       <view class="flex bg-#ffffff">
         <dropDownBox class="grow-1 pl-4 pr-4">
@@ -45,7 +45,7 @@
               <view><text class="text-sm">{{ v?.orderNumber }}</text></view>
             </view>
 
-            <uni-icons :type="v.visible?'up':'down'" color="" size="16" @click="v.visible = !v.visible" />
+            <!-- <uni-icons :type="v.visible?'up':'down'" color="" size="16" @click="v.visible = !v.visible" /> -->
           </view>
 
           <view class="mb-2">
@@ -121,7 +121,7 @@ import dropDownBox from '@/components/drop-down-scroll-view/drop-down-box.vue'
 // import searchPopup from './components/search-popup.vue';
 // import rangePicker from '@/components/range-picker/index.vue'
 import { sleep, useMescroll } from '@/composables'
-import { onLoad, onPageScroll, onReachBottom } from '@dcloudio/uni-app'
+import { onHide, onLoad, onPageScroll, onReachBottom, onShow, onUnload } from '@dcloudio/uni-app'
 
 import { computed, ref, unref } from 'vue'
 
@@ -148,16 +148,92 @@ const searchInput = ref({
  
 }) 
 
+const timer = ref()
 
-onLoad(() => {
-  console.log('页面 onload')
-  orderStore.getOrderTypeList()
-  orderStore.getOrderStateList()
+const startTimer = () => {
+  timer.value = setInterval(() => {
+   
+    downCallback(mescroll.value)
+   
+  }, 1 * 5 * 1000)
+}
+
+const clearRefresh = () => {
+  clearInterval(timer.value)
+  timer.value = null;
+}
+
+const restartTimer = ref()
+
+const startRestartTimer = () => {
+  restartTimer.value = setTimeout(() => {
+    startTimer()
+  }, 3000)
+}
+
+const clearRestartRefresh = () => {
+  clearTimeout(restartTimer.value)
+  restartTimer.value = null;
+}
+
+onHide(() => {
+  
+  isLoad.value = false
+  clearRefresh()
+  clearRestartRefresh()
   
 })
 
+const isActive = ref(false)
+
+const isLoad = ref(false)
+onShow(() => {
+ 
+  if(!isLoad.value){
+    setTimeout(() => {
+    isActive.value = true
+   
+    downCallback(mescroll.value)
 
 
+  }, 0)
+  }
+  
+})
+onLoad(() => {
+  isLoad.value = true
+//  downCallback(mescroll.value)
+ 
+  orderStore.getOrderTypeList()
+  orderStore.getOrderStateList()
+  
+  
+
+  startTimer()
+})
+
+onUnload(() => {
+  isLoad.value = false
+  clearRefresh()
+  clearRestartRefresh()
+})
+
+const isTouchStart = ref(false)
+
+const handleTouchstart = () => {
+  isTouchStart.value = true
+ clearRestartRefresh()
+ clearRefresh()
+}
+
+const isOpen = ref(false)
+const handleTouchend = () => {
+  isTouchStart.value = false
+ if(!isOpen.value){
+   startRestartTimer()
+ }
+
+}
 
 const handleFinallySelect = (v:any) => {
   downCallback(mescroll.value)
@@ -231,12 +307,20 @@ const isUp = ref(true)
 const upCallback = async (ms: any) => {
   try {
     const res = await orderInfoValidList()
-    
     data.value = isUp.value ? res?.result : data.value.concat(res?.result || [])
-    mescroll.value.endSuccess(res?.result?.length, res?.result?.length)
+    mescroll.value.endSuccess(res?.result?.length, false)
+    if(isUp.value){
+      mescroll.value.scrollTo(0 , 45)
+    }
+
+    if(isActive.value && !isTouchStart.value){
+      startTimer()
+      isActive.value = false
+    }
 
     isUp.value = false
   } catch (_) {
+    
     ms.endErr()
   }
 }

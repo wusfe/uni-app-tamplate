@@ -327,6 +327,10 @@ export default {
       this.provideHidePup && this.provideHidePup(this)
 
       this.provideMask && this.provideMask(this.isShowModal)
+
+      // this.$emit('open')
+      
+      // console.log('open')
     },
     hideModal() {
       // 隐藏model
@@ -334,6 +338,9 @@ export default {
       this.temlateValue = this._value
       this.searchInput = ''
       // 关闭禁止穿透滚动
+
+      // this.$emit('close')
+      // console.log('close')
     },
     handleSearchConfirm(v){
       console.log(12, v);

@@ -15,6 +15,21 @@ interface UserResult{
 export const useUserStore = defineStore(
   'user',
   () => {
+    // 登录信息
+    const userLoginInfo = ref<{
+      account: string;
+      password: string;
+    }>()
+
+    const setUserLoginInfo = (data: {
+      account: string;
+      password: string;
+    }) => {
+      userLoginInfo.value = data
+    }
+    const clearUserLoginInfo = () => {
+      userLoginInfo.value = undefined
+    }
     // 会员信息
     const profile = ref<UserResult>()
 
@@ -39,7 +54,10 @@ export const useUserStore = defineStore(
       profile,
       setUserInfo,
       clearProfile,
-      isAuth
+      isAuth,
+      userLoginInfo,
+      setUserLoginInfo,
+      clearUserLoginInfo
     }
   },
   {

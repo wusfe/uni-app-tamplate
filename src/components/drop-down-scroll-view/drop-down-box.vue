@@ -21,7 +21,7 @@ import { provide, ref } from 'vue'
 defineOptions({
   inheritAttrs: false
 })
-
+const emits = defineEmits(['mask'])
 
 const coms = ref<any>([])
 
@@ -55,6 +55,8 @@ const hideMask = () => {
 
 
 watch(isShowModal, (n) => {
+  // console.log(n, 'status');
+    emits('mask', n)
     // #ifdef H5
 				// fix by mehaotian 处理 h5 滚动穿透的问题
 				document.getElementsByTagName('body')[0].style.overflow = n ? 'hidden' : 'visible'
