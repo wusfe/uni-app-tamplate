@@ -1,12 +1,12 @@
 <template>
-  <view class="flex flex-col h-100%">
+  <view class="flex flex-col h-100%" @touchstart="handleTouchstart" @touchend="handleTouchend">
     <view class="shrink-0">
       <view class="flex justify-between items-center bg-#ffffff pt-3 pb-3 pl-3 pr-3">
         
 
         <view class="flex justify-between items-center grow-1">
           <view class="text-color-primary">今日船只：{{ total }}</view>
-          <view class="flex items-center"><text class="text-color-primary text-sm" @click="handleTo">今日统计</text><uni-icons
+          <view class="flex items-center" @click="handleTo"><text class="text-color-primary text-sm" >今日统计</text><uni-icons
             type="arrow-right"
              color="#007aff"
             size="18"
@@ -54,7 +54,7 @@
 
                 <view class="ml-40rpx" >
                   <!-- 到港 -->
-                    <template v-if="v?.shipState">
+                    <template v-if="v?.shipState && v?.shipState==='到港'">
                       <!-- 如果车道到存在 则另外一个港口不可点击 -->
                       <view class="flex items-center">
                         <button  type="primary" :disabled="v?.shipNumber === 2" size="mini" plain class="block mr-20rpx" style="border-radius: 30rpx;padding: 0rpx 40rpx" @click="handleLeave(v)">{{v?.shipNumber === 1?'离港':'到港'}}1</button>
@@ -78,7 +78,7 @@
                     </template>
                   
                     <!-- 离港 -->
-                    <template v-if="!v?.shipState">
+                    <template v-if="!v?.shipState || v?.shipState==='离港'">
                       <button type="primary" size="mini" plain class="block mr-20rpx" style="border-radius: 30rpx;padding: 0rpx 40rpx" @click="handleArrive(v, 1)">到港1</button>
                       <button type="primary" size="mini" plain class="block mr-20rpx" style="border-radius: 30rpx;padding: 0rpx 40rpx" @click="handleArrive(v, 2)">到港2</button>
                     </template> 
@@ -95,7 +95,7 @@
     </view>
   </view>
 
-  <qrPopup ref="qrPopupRef"></qrPopup>
+  <qrPopup ref="qrPopupRef" ></qrPopup>
 
 
   <uni-popup ref="inputDialog" type="dialog">
@@ -106,7 +106,7 @@
 </template>
 
 <script setup lang="ts">
-import { onLoad, onPageScroll, onReachBottom } from '@dcloudio/uni-app'
+import { onHide, onLoad, onPageScroll, onReachBottom, onShow, onUnload } from '@dcloudio/uni-app'
 import { ref, computed } from 'vue'
 import { sleep, useMescroll } from '@/composables'
 import { peopleandcarnumberAdd, shipinforPage, shipinforUpdate, updateePeoplenumber } from '@/api';
@@ -121,6 +121,111 @@ const { mescrollInit, getMescroll } = useMescroll(onPageScroll, onReachBottom) /
 
 const mescroll = computed(() => getMescroll()) as any // 必须使用计算属性才可及时获取到mescroll对象,此处是me-video中使用
 
+
+// --------------- start
+const timer = ref()
+
+const startTimer = () => {
+  timer.value = setInterval(() => {
+ 
+    downCallback(mescroll.value)
+   
+  }, 1 * 60 * 1000)
+}
+const startRestartTimer = () => {
+  restartTimer.value = setTimeout(() => {
+    startTimer()
+  }, 3000)
+}
+
+const clearRefresh = () => {
+  clearInterval(timer.value)
+  timer.value = null;
+}
+
+const clearRestartRefresh = () => {
+  clearTimeout(restartTimer.value)
+  restartTimer.value = null;
+}
+
+const restartTimer = ref()
+
+// 是否从后台进入到展示
+const isActive = ref(false)
+
+// 是否初始加载
+const isLoad = ref(false)
+
+// 是否手指触摸
+const isTouchStart = ref(false)
+
+//是否打开弹框
+const isOpen = ref(false)
+
+const handleTouchstart = () => {
+  isTouchStart.value = true
+  clearRestartRefresh()
+  clearRefresh()
+}
+
+const handleTouchend = () => {
+  isTouchStart.value = false
+  clearRestartRefresh()
+  clearRefresh()
+  if(!isOpen.value){
+    startRestartTimer()
+  }
+
+}
+
+// 弹框的展示与关闭回调
+const handleMask = (s:boolean) => {
+ console.log('回来了');
+ 
+ isOpen.value = s
+
+ clearRestartRefresh()
+ clearRefresh()
+
+ if(s){
+  
+ }else {
+   startRestartTimer()
+ }
+}
+
+onShow(() => {
+ 
+ if(!isLoad.value){
+   setTimeout(() => {
+   isActive.value = true
+   
+   downCallback(mescroll.value)
+ }, 0)
+ }
+ 
+})
+
+onLoad(() => {
+  isLoad.value = true
+  startTimer()
+})
+
+onHide(() => {
+  isLoad.value = false
+  clearRefresh()
+  clearRestartRefresh()
+  
+})
+
+onUnload(() => {
+  isLoad.value = false
+  clearRefresh()
+  clearRestartRefresh()
+})
+
+
+// ---------------  end
 
 // 控制上拉加载的参数
 const upOptions = ref({
@@ -183,6 +288,14 @@ const upCallback = async (ms: any) => {
 
     mescroll.value.endSuccess(res?.result?.items?.length, res?.result?.totalPages)
 
+    if(isUp.value){
+      mescroll.value.scrollTo(0 , 45)
+    }
+    if(isActive.value && !isTouchStart.value){
+      startTimer()
+      isActive.value = false
+    }
+
     isUp.value = false
   } catch (_) {
     ms.endErr()
@@ -227,8 +340,9 @@ const handleLeave = (v:any) => {
 
 const qrPopupRef = ref()
 const handleCarCode = () => {
-  console.log(qrPopupRef);
-  
+  // 打开ETC触发定时器逻辑
+  handleMask(true)
+
   // console.log( qrPopupRef.value.ETC);
   
   qrPopupRef.value.ETC()
@@ -240,6 +354,8 @@ const selectItem = ref()
 const handleAddPerson = (v:any) => {
 
   inputDialog.value.open()
+  // 打开弹框触发定时器逻辑
+  handleMask(true)
 
   selectItem.value = v;
 }
@@ -247,8 +363,6 @@ const handleAddPerson = (v:any) => {
 const inputClose = ref()
 const dialogInputConfirm = (v:any) => {
 
- 
-  
   if(!v){
     uni.showToast({
       title:'请输入人数',
@@ -258,6 +372,8 @@ const dialogInputConfirm = (v:any) => {
   }
 
   inputClose.value?.close()
+  // 关闭弹框触发定时器逻辑
+  handleMask(false)
   
   updateePeoplenumber({
     shipCode: selectItem.value.shipCode,

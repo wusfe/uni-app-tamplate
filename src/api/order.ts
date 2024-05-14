@@ -71,3 +71,12 @@ export const orderInfoValidList= async (data:any) => http<any>({
   method: 'GET',
   data
 })
+
+
+
+// 订单统计曲线图
+export const getOrderByMonthChart= async (data?:any) => http<any>({
+  url: `/api/orderinfor/orderByMonthChart`,
+  method: 'GET',
+  data
+})

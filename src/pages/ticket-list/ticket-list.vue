@@ -1,7 +1,29 @@
 <template>
   <view class="flex flex-col h-100%" @touchstart="handleTouchstart" @touchend="handleTouchend">
-    <!-- <view class="shrink-0">
-      <view class="flex bg-#ffffff">
+    <view class="bg-#ffffff pl-4 pr-4 pt-2 mt-2 bb1 pb-3 shrink-0 relative z-1">
+      <view class="flex items-center">
+        <view class="grow-1">
+          <searchBar
+            ref="s1"
+            @confirm="handleConfirm"
+            placeholder="请输入车牌号"
+            radius="60"
+            :showConfirmBtn="false"
+          />
+          <searchBar
+            class="mt-20rpx"
+            ref="s2"
+            @confirm="handleConfirm"
+            placeholder="请输入相邻车牌号"
+            radius="60"
+            :showConfirmBtn="false"
+          />
+        </view>
+
+        <view class="uni-searchbar__confirm shrink-0" @click="handleConfirm">搜索</view>
+      </view>
+
+      <!-- <view class="flex bg-#ffffff">
         <dropDownBox class="grow-1 pl-4 pr-4">
           <template v-slot:top>
               <view class=" position-absolute right-0 top-26rpx right-16rpx flex justify-center items-center" @click="showSearchPopup">
@@ -22,12 +44,13 @@
             </view>
           </view>
         </dropDownBox>
-      </view>
-    </view> -->
+      </view> -->
+    </view>
     <!-- 列表 -->
 
     <view class="grow-1 min-h-0">
       <mc-uni
+        @scroll="handleScroll"
         :fixed="false"
         style="height: 100%"
         @init="mescrollInit"
@@ -36,13 +59,23 @@
         @down="downCallback"
         @up="upCallback"
       >
-        <view class="pl-4 pr-4 bg-#ffffff pt-4 pb-3 today-order-item" v-for="v in data">
+        <view
+          class="pl-4 pr-4 bg-#ffffff pt-4 pb-3 today-order-item"
+          :class="{
+            [v?.orderCarNumber?.toLocaleLowerCase()]: true,
+            'select-color': searchValue === v?.orderCarNumber?.toLocaleLowerCase(),
+          }"
+          :key="v.id"
+          v-for="v in data"
+        >
           <view class="flex justify-between mb-2 items-center">
             <view class="flex">
               <view class="w-168rpx"
                 ><text class="text-color-#606266 text-sm">订单编号：</text></view
               >
-              <view><text class="text-sm">{{ v?.orderNumber }}</text></view>
+              <view
+                ><text class="text-sm">{{ v?.orderNumber }}</text></view
+              >
             </view>
 
             <!-- <uni-icons :type="v.visible?'up':'down'" color="" size="16" @click="v.visible = !v.visible" /> -->
@@ -87,7 +120,9 @@
                     ><text class="text-color-#606266 text-sm">收费类型：</text></view
                   >
                   <view
-                    ><text class="text-sm">{{ ORDERCHARGETYPELISTLABEL[v?.orderChargeType] }}</text></view
+                    ><text class="text-sm">{{
+                      ORDERCHARGETYPELISTLABEL[v?.orderChargeType]
+                    }}</text></view
                   >
                 </view>
               </view>
@@ -101,20 +136,27 @@
             >
           </view>
 
-          <view  class="flex justify-end items-center">
-            <button class="cbtn items-end" type="primary" size="mini"  plain @click="handleToDetail(v)">详情</button>
+          <view class="flex justify-end items-center">
+            <button
+              class="cbtn items-end"
+              type="primary"
+              size="mini"
+              plain
+              @click="handleToDetail(v)"
+            >
+              详情
+            </button>
           </view>
         </view>
       </mc-uni>
     </view>
-
-
   </view>
 
   <!-- <searchPopup :search-input="searchInput" @confirm="handleConfirm" ref="rightPopup"  /> -->
 </template>
 
 <script setup lang="ts">
+import searchBar from '@/components/search-bar/index.vue'
 import dropDownScrollView from '@/components/drop-down-scroll-view/index.vue'
 import dropDownBox from '@/components/drop-down-scroll-view/drop-down-box.vue'
 
@@ -127,14 +169,14 @@ import { computed, ref, unref } from 'vue'
 
 import { useOrderStore } from '@/stores'
 
-import moment from 'moment';
-import { orderInfoValidList } from '@/api';
-import { watch } from 'vue';
+import moment from 'moment'
+import { orderInfoValidList } from '@/api'
+import { watch } from 'vue'
 import { ORDERCHARGETYPELISTLABEL } from '@/consts'
 
 const orderStore = useOrderStore()
 
-const dateValue = ref([]);
+const dateValue = ref([])
 
 const searchInput = ref({
   orderState: -2,
@@ -145,24 +187,29 @@ const searchInput = ref({
   orderChargeType: '',
   orderCarNumber: '',
   orderNumber: '',
- 
-}) 
+})
 
 const timer = ref()
 
 const startTimer = () => {
-  timer.value = setInterval(() => {
-   
-    downCallback(mescroll.value)
-   
-  }, 1 * 5 * 1000)
+  timer.value = setInterval(
+    () => {
+      downCallback(mescroll.value)
+    },
+    1 * 5 * 1000,
+  )
 }
 
 const clearRefresh = () => {
   clearInterval(timer.value)
-  timer.value = null;
+  timer.value = null
 }
 
+const clearScrollTimer = () => {
+  clearTimeout(scrollTimer.value)
+
+  scrollTimer.value = null
+}
 const restartTimer = ref()
 
 const startRestartTimer = () => {
@@ -173,69 +220,77 @@ const startRestartTimer = () => {
 
 const clearRestartRefresh = () => {
   clearTimeout(restartTimer.value)
-  restartTimer.value = null;
+  restartTimer.value = null
 }
 
 onHide(() => {
-  
   isLoad.value = false
+ 
   clearRefresh()
   clearRestartRefresh()
-  
+  clearScrollTimer()
 })
 
 const isActive = ref(false)
 
 const isLoad = ref(false)
 onShow(() => {
- 
-  if(!isLoad.value){
+  clearRefresh()
+  clearRestartRefresh()
+  clearScrollTimer()
+
+  if (!isLoad.value) {
     setTimeout(() => {
-    isActive.value = true
-   
-    downCallback(mescroll.value)
+      isActive.value = true
 
-
-  }, 0)
+      downCallback(mescroll.value)
+    }, 0)
   }
-  
 })
 onLoad(() => {
-  isLoad.value = true
-//  downCallback(mescroll.value)
  
+  clearRefresh()
+  clearRestartRefresh()
+  clearScrollTimer()
+  // upCallback(mescroll.value, () => {
+
+  // })
+
+  isLoad.value = true
+  //  downCallback(mescroll.value)
+
   orderStore.getOrderTypeList()
   orderStore.getOrderStateList()
-  
-  
 
   startTimer()
 })
 
 onUnload(() => {
   isLoad.value = false
+ 
   clearRefresh()
   clearRestartRefresh()
+  clearScrollTimer()
 })
 
 const isTouchStart = ref(false)
 
 const handleTouchstart = () => {
   isTouchStart.value = true
- clearRestartRefresh()
- clearRefresh()
+  clearRestartRefresh()
+  clearRefresh()
+  clearScrollTimer()
 }
 
 const isOpen = ref(false)
 const handleTouchend = () => {
   isTouchStart.value = false
- if(!isOpen.value){
-   startRestartTimer()
- }
-
+  if (!isOpen.value) {
+    startRestartTimer()
+  }
 }
 
-const handleFinallySelect = (v:any) => {
+const handleFinallySelect = (v: any) => {
   downCallback(mescroll.value)
 }
 
@@ -245,9 +300,9 @@ const handleToDetail = (v: any) => {
   })
 }
 
-const handleDateConfirm = (v:any) => {
-  searchInput.value.orderBuyTimeStart = v?.length > 0? v[0]+' 00:00:00':'';
-  searchInput.value.orderBuyTimeEnd = v?.length > 0? v[1]+' 23:59:59':'';
+const handleDateConfirm = (v: any) => {
+  searchInput.value.orderBuyTimeStart = v?.length > 0 ? v[0] + ' 00:00:00' : ''
+  searchInput.value.orderBuyTimeEnd = v?.length > 0 ? v[1] + ' 23:59:59' : ''
 
   downCallback(mescroll.value)
 }
@@ -256,12 +311,12 @@ const { mescrollInit, getMescroll } = useMescroll(onPageScroll, onReachBottom) /
 
 const mescroll = computed(() => getMescroll()) as any // 必须使用计算属性才可及时获取到mescroll对象,此处是me-video中使用
 
-
 // 控制上拉加载的参数
 const upOptions = ref({
   use: true, // 是否启用上拉加载; 默认true
   auto: true, // 是否在初始化完毕之后自动执行上拉加载的回调; 默认true
   isBoth: false,
+  onScroll: true,
   page: {
     num: 0, // 当前页码,默认0,回调之前会加1,即callback(page)会从1开始
     size: 10, // 每页数据的数量
@@ -304,50 +359,287 @@ const data = ref<any>([])
 const isUp = ref(true)
 
 // 上拉加载函数
-const upCallback = async (ms: any) => {
+const upCallback = async (ms: any, c?: any) => {
   try {
+    console.log('request');
+    
     const res = await orderInfoValidList()
-    data.value = isUp.value ? res?.result : data.value.concat(res?.result || [])
-    mescroll.value.endSuccess(res?.result?.length, false)
-    if(isUp.value){
-      mescroll.value.scrollTo(0 , 45)
-    }
+   
+    
+    // console.log(isUp.value, 'isUp')
+    // const asd = [
+    //   ...[
+    //     {
+    //       id: Date.now(),
+    //       orderNumber: Date.now(),
+    //       orderType: '轿车',
+    //       orderTypeorderTypeName: null,
+    //       orderUnitPrice: 15,
+    //       orderPeopleNumber: 1,
+    //       orderTotalPrice: 15,
+    //       orderChargeType: '1',
+    //       userID: 0,
+    //       userName: '',
+    //       orderState: 4,
+    //       orderBuyTime: '2024-05-13 19:16:28',
+    //       orderCarNumber: `苏${Date.now()}  `,
+    //       orderCarLoad: 1.1,
+    //       orderCarType: '02',
+    //       orderCarPeopleNumber: 1,
+    //       orderChargeNumber: '1',
+    //       orderChargeName: '02      ',
+    //       orderInvoiceCode: '99999999999903284322',
+    //       tenantId: 1,
+    //       shipNo: '   ',
+    //       shipTime: '2024-05-13 19:16:28',
+    //       shipDirect: '新扬高汽渡——高港汽渡',
+    //       qRstate: false,
+    //       userList: null,
+    //     },
+    //     ...(data.value.length > 0 ? data.value : res?.result),
+    //   ],
+    // ]
 
-    if(isActive.value && !isTouchStart.value){
+    data.value = res?.result
+    // data.value = isUp.value ? res?.result : data.value.concat(res?.result || [])
+    mescroll.value.endSuccess(res?.result?.length, false)
+    // if(isUp.value && bottomDistanceRef.value !== undefined){
+
+    fnHandleSearch.value && fnHandleSearch.value(ms)
+    //   setTimeout(() => {
+    //     ms.scrollTo(Math.abs(ms.scrollHeight - bottomDistanceRef.value - ms.clientHeight) , 0)
+    //   }, 0)
+
+    //   // setTimeout(() => {
+    //   //   mescroll.value.scrollTo(120 , 1500)
+    //   // }, 1000)
+    // }
+
+    if (isActive.value) {
+      clearScrollTimer()
+      clearRestartRefresh()
+      clearRefresh()
+
       startTimer()
       isActive.value = false
     }
 
-    isUp.value = false
+    if (clickCOnfirm.value) {
+      clearScrollTimer()
+      clearRestartRefresh()
+      clearRefresh()
+
+      startTimer()
+      clickCOnfirm.value = false
+    }
+
+    c && c()
+    // isUp.value = false
   } catch (_) {
-    
-    ms.endErr()
+    // console.log(mescroll);
+
+    mescroll.value?.endErr()
   }
 }
 
 // 下拉刷新函数
 const downCallback = async (ms: any) => {
   isUp.value = true
+
   ms?.resetUpScroll()
+
+  // upCallback(mescroll.value)
 }
 
 // 右侧的筛选
-const rightPopup = ref();
+const rightPopup = ref()
 
 const showSearchPopup = () => {
   rightPopup.value?.open()
 }
 
+// const handleConfirm = (v:any) => {
+//   searchInput.value = JSON.parse(JSON.stringify(unref(v)))
+//   searchInput.value.orderState =  searchInput.value.orderState || -2
+//   rightPopup.value?.close()
 
-const handleConfirm = (v:any) => {
-  searchInput.value = JSON.parse(JSON.stringify(unref(v)))
-  searchInput.value.orderState =  searchInput.value.orderState || -2
-  rightPopup.value?.close()
+//   downCallback(mescroll.value)
+// }
+const bottomDistanceRef = ref()
 
-  downCallback(mescroll.value)
+const isScroll = ref(false)
+
+const scrollTimer = ref()
+
+const handleScroll = (ms: any) => {
+  
+  clearRefresh()
+  clearRestartRefresh()
+  clearScrollTimer()
+  // bottomDistanceRef.value = Number(
+  //   Math.abs(ms.scrollHeight - ms.scrollTop - ms.clientHeight).toFixed(5),
+  // )
+
+  scrollTimer.value = setTimeout(() => {
+    startRestartTimer()
+  }, 1500)
 }
 
+const fnHandleSearch = ref()
+const searchValue = ref('')
+const clickCOnfirm = ref(false)
 
+const s1 = ref()
+const s2 = ref()
+const handleConfirm = (v: any) => {
+  const s1value = s1.value.searchVal?.toLocaleLowerCase()
+  const s2value = s2.value.searchVal?.toLocaleLowerCase()
+
+  if (!s1value || !s2value) {
+    uni.showToast({
+      title: !s1value ? '请输入车牌号' : !s2value ? '请输入相邻车牌号' : '',
+      icon: 'none',
+      duration: 1000,
+    })
+    return
+  }
+
+  console.log(s1value, s2value)
+
+  // const value = v?.value.toLocaleLowerCase()
+  
+  clearRefresh()
+  clearRestartRefresh()
+  clearScrollTimer()
+  if (s1value && s2value) {
+    const findItem = data.value?.find((item: any) =>
+      item.orderCarNumber?.toLocaleLowerCase()?.includes(s1value),
+    )
+    const findItem2 = data.value?.find((item: any) =>
+      item.orderCarNumber?.toLocaleLowerCase()?.includes(s2value),
+    )
+    const arr = []
+
+    const msg = []
+    if (findItem) {
+      arr.push(findItem)
+    } else {
+     
+      msg.push(() => {
+        uni.showToast({
+        title: '车牌号不存在',
+        icon: 'none',
+        })
+      })
+    }
+    if (findItem2) {
+      arr.push(findItem2)
+    } else {
+
+      msg.push(() => {
+        uni.showToast({
+        title: '相邻车牌号不存在',
+        icon: 'none',
+      })
+      })
+
+     
+      
+    }
+
+    if(msg.length > 0){
+      msg[0]()
+    }
+
+    if (arr.length >1 ) {
+      // console.log(`.${findItem?.orderCarNumber}`)
+      arr.sort((a, b) => moment(a.orderBuyTime).valueOf() - moment(b.orderBuyTime).valueOf())
+
+      console.log(arr)
+
+      searchValue.value = arr[0]?.orderCarNumber.toLocaleLowerCase()
+
+      // searchValue.value = findItem?.orderCarNumber.toLocaleLowerCase()
+      mescroll.value.scrollTo(`.${searchValue.value}`, 45)
+
+     
+      clearRefresh()
+      clearRestartRefresh()
+      clearScrollTimer()
+    } else {
+      uni.showLoading({
+        mask:true,
+      })
+
+      clickCOnfirm.value = true
+
+      downCallback(mescroll.value)
+      fnHandleSearch.value = (ms: any) => {
+        fnHandleSearch.value = null
+        const findItem = data.value?.find((item: any) =>
+          item.orderCarNumber?.toLocaleLowerCase()?.includes(s1value),
+        )
+        const findItem2 = data.value?.find((item: any) =>
+          item.orderCarNumber?.toLocaleLowerCase()?.includes(s2value),
+        )
+        const arr = []
+        if (findItem) {
+          arr.push(findItem)
+        } else {
+          uni.showToast({
+            title: '车牌号不存在',
+            icon: 'none',
+          })
+          return
+        }
+        if (findItem2) {
+          arr.push(findItem2)
+        } else {
+          uni.showToast({
+            title: '相邻车牌号不存在',
+            icon: 'none',
+          })
+          return
+        }
+
+        uni.hideLoading()
+        clickCOnfirm.value = false
+        if (arr.length > 0) {
+          // console.log(`.${findItem?.orderCarNumber}`)
+          arr.sort((a, b) => moment(a.orderBuyTime).valueOf() - moment(b.orderBuyTime).valueOf())
+
+          searchValue.value = arr[0]?.orderCarNumber.toLocaleLowerCase()
+
+          // searchValue.value = findItem?.orderCarNumber?.toLocaleLowerCase()
+          setTimeout(() => {
+            ms.scrollTo(`.${searchValue.value}`, 0)
+
+           
+            clearRefresh()
+            clearRestartRefresh()
+            clearScrollTimer()
+          }, 10)
+        } else {
+          fnHandleSearch.value = null
+          uni.showToast({
+            title: '暂无次订单',
+            icon: 'none',
+          })
+         
+          clearRefresh()
+          clearRestartRefresh()
+          clearScrollTimer()
+        }
+
+        fnHandleSearch.value = null
+      }
+    }
+  } else {
+    searchValue.value = value
+
+    fnHandleSearch.value = null
+  }
+}
 </script>
 
 <style scoped lang="scss">
@@ -382,5 +674,23 @@ const handleConfirm = (v:any) => {
       background-color: #e5e5e5;
     }
   }
+}
+
+.select-color {
+  background-color: rgba($color: #000000, $alpha: 0.1);
+}
+
+:deep(.uni-searchbar__confirm) {
+  // padding: 50rpx;
+  // padding-right: 0;
+  padding-left: 20rpx;
+  padding-top: 20rpx;
+  padding-bottom: 20rpx;
+  line-height: 36px;
+  font-size: 14px;
+  color: $uni-color-primary;
+  /* #ifdef H5 */
+  cursor: pointer;
+  /* #endif */
 }
 </style>

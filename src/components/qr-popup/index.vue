@@ -60,6 +60,7 @@ import permision from '@/utils/permission'
 import qr from '@/components/qr/index.vue'
 import { useEtcStore } from '@/stores'
 
+const emits = defineEmits(['back'])
 const etcStore = useEtcStore()
 const popup = ref()
 const popup2 = ref()
@@ -102,8 +103,6 @@ const handleScanCode = async (type: 1 | 2) => {
       },
     })
   } else {
-    console.log(1);
-    
     uni.scanCode({
       onlyFromCamera: true,
       // autoDecodeCharset: true,
@@ -111,8 +110,6 @@ const handleScanCode = async (type: 1 | 2) => {
       hideAlbum: true,
       // autoZoom: false,
       success: function (res) {
-        console.log(2);
-       
         if (openType.value == 1) {
           handleMask()
 
@@ -160,6 +157,8 @@ const handleETC = async () => {
     const app = getApp<any>()
 
     app.globalData.hidepopup2 = () => {
+      emits('back')
+
       if(openType.value == 1){
         uni.navigateBack()
       }else{
@@ -169,7 +168,10 @@ const handleETC = async () => {
     }
 
     app.globalData.setImage = (url: string) => {
-     
+      // 从拍照页面回来
+    //  setTimeout(() => {
+    //   emits('back')
+    //  },0)
       plus.io.resolveLocalFileSystemURL(url, function (entry: any) {
         entry.file(function (e: any) {
           let fileReader = new plus.io.FileReader()
@@ -212,7 +214,7 @@ const getEtcCode = (imageUrl: any, url: any) => {
   })
   let s = encodeURI(imageUrl.replace('/^data:image\/\w+;base64,/', ''))
 
-  console.log(etcStore.token)
+  // console.log(etcStore.token)
 
   //   let a = '24.c4a32685868f9f5eb5550af984a365df.2592000.1715909195.282335-61703788'
   var options = {

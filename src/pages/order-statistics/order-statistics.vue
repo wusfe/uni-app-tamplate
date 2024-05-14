@@ -134,7 +134,7 @@
 </template>
 
 <script setup lang="ts">
-import { orderByMonthList } from '@/api'
+import { getOrderByMonthChart, orderByMonthList } from '@/api'
 import singleSelect from '@/components/single-select/index.vue'
 import singleBox from '@/components/single-select/single-box.vue'
 import { onLoad } from '@dcloudio/uni-app'
@@ -207,13 +207,14 @@ const opts2 = {
     '#9A60B4',
     '#ea7ccc',
   ],
-  padding: [15, 10, 0, 15],
+  padding: [15, 20, 20, 8],
   enableScroll: false,
   legend: {
     position: 'top',
   },
   xAxis: {
     disableGrid: true,
+    rotateLabel: true
   },
   yAxis: {
     gridType: 'dash',
@@ -262,40 +263,62 @@ const getData = () => {
     )
   })
 }
+
+const refreshChart = () => {
+  getOrderByMonthChart().then(res => {
+    // console.log(res.result, 'res');
+    const {xAxisdata=[], seriesData= []}  = res.result
+
+    console.log(seriesData);
+    console.log(xAxisdata);
+    
+    let result = {
+      // categories: ['2018', '2019', '2020', '2021', '2022', '2023'],
+      categories: xAxisdata,
+      series:seriesData
+      
+      // [
+      //   // {
+      //   //   // name: '散客',
+      //   //   data: [35, 8, 25, 37, 4, 20],
+      //   // },
+      //   // {
+      //   //   // name: '二轮车',
+      //   //   data: [70, 40, 65, 100, 44, 68],
+      //   // },
+      //   // {
+      //   //   // name: '三轮车',
+      //   //   data: [100, 80, 95, 150, 112, 132],
+      //   // },
+      //   // {
+      //   //   // name: '轿车',
+      //   //   data: [30, 40, 20, 120, 110, 90],
+      //   // },
+      //   // {
+      //   //   // name: '货车',
+      //   //   data: [60, 70, 20, 88, 90, 180],
+      //   // },
+        
+      // ],
+    }
+   
+    
+    chartData2.value = JSON.parse(JSON.stringify(result))
+    
+  })
+}
 onLoad(() => {
   getData()
 
-  setTimeout(() => {
-    //模拟服务器返回数据，如果数据格式和标准格式不同，需自行按下面的格式拼接
-    let res = {
-      categories: ['2018', '2019', '2020', '2021', '2022', '2023'],
-      series: [
-        {
-          name: '散客',
-          data: [35, 8, 25, 37, 4, 20],
-        },
-        {
-          name: '二轮车',
-          data: [70, 40, 65, 100, 44, 68],
-        },
-        {
-          name: '三轮车',
-          data: [100, 80, 95, 150, 112, 132],
-        },
-        {
-          name: '轿车',
-          data: [30, 40, 20, 120, 110, 90],
-        },
-        {
-          name: '货车',
-          data: [60, 70, 20, 88, 90, 180],
-        },
-      ],
-    }
-    chartData2.value = JSON.parse(JSON.stringify(res))
-  }, 500)
+ 
+
+  
+  refreshChart()
 })
-const handleDateConfirm = () => [getData()]
+const handleDateConfirm = () => {
+  getData()
+  refreshChart()
+}
 //   const handleChange = (day: number) => {
 //     searchInput.value.dt = moment().add(day, 'days').format('YYYY-MM-DD')
 

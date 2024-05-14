@@ -1,5 +1,5 @@
 <template>
-  <view class="uni-searchbar">
+  <view class="uni-searchbar" >
     <view
       :style="{ borderRadius: radius + 'px', backgroundColor: bgColor }"
       class="uni-searchbar__box"
@@ -11,6 +11,7 @@
         </slot>
       </view>
       <input
+    
         v-if="show || searchVal"
         :focus="showSync"
         :disabled="readonly"
@@ -41,6 +42,7 @@
     </view>
 
     <text
+     v-if="showConfirmBtn"
       @click="confirm"
       class="uni-searchbar__confirm"
       
@@ -135,7 +137,10 @@ export default {
       type: Boolean,
       default: false,
     },
-    
+    showConfirmBtn:{
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {
