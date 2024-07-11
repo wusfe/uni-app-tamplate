@@ -3,8 +3,8 @@
 		<view class="">
 
 		</view>
-		<button @tap="xuanweizhi" style="margin-top: 160px;">选取位置</button>
-		<view class="dqwz" v-if="name">
+		<!-- <button @tap="xuanweizhi" style="margin-top: 160px;">选取位置</button> -->
+		<!-- <view class="dqwz" v-if="name">
 			当前位置: {{name}}
 		</view>
 		<view class="dqwz"  style="margin-top: 20px;">
@@ -12,8 +12,8 @@
 		</view>
 		<view class="dqwz"  style="margin-top: 20px;">
 			lat: {{lat}}
-		</view>
-		<sylj-selectLocation ref="selectLocationPop" @ok="selectedOk"></sylj-selectLocation>
+		</view> -->
+		<sylj-selectLocation ref="selectLocationPop" ></sylj-selectLocation>
 	</view>
 </template>
 
@@ -32,7 +32,34 @@ import syljSelectLocation from '@/components/sylj-selectLocation/sylj-selectLoca
     components: {
 			'sylj-selectLocation ': syljSelectLocation
 		},
+		onUnload() {
+			const app = getApp()
+			app.globalData.setTimer(false)
+			if(app.globalData.setTimer){
+				app.globalData.setTimer = null
+			}
+		},
+		onHide() {
+			
+
+			const app = getApp()
+
+			app.globalData?.setTimer(false)
+			
+		},
+
+		onShow(){
+			const app = getApp()
+			if(app?.globalData?.setTimer){
+				app.globalData.setTimer(true)
+			}
+		
+		},
 		onLoad() {
+			// setTimeout(() => {
+			// 	this.$refs.selectLocationPop.open(12, 121,
+			// 			'13078c561bcc74e8444fce41f89fcf94');
+			// }, 200)
 			uni.getLocation({
 				type: 'wgs84',
 				success: (res) => {

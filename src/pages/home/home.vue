@@ -227,7 +227,7 @@ const menu = [
   {
     icon: <i class="zhfont zh-fangpengzhuang text-color-white"></i>,
     bg: '#2585EE',
-    text: '防碰撞',
+    text: '运行轨迹',
     url: '/pages/anti-collision/anti-collision',
     auth: 'orderinfor:Anticollision',
   },

@@ -33,7 +33,7 @@
 		{
 			"path": "pages/anti-collision/anti-collision",
 			"style": {
-				"navigationBarTitleText": "防碰撞"
+				"navigationBarTitleText": "运行轨迹"
 			}
 		},
 		{

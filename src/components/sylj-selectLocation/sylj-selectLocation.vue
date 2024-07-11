@@ -51,8 +51,6 @@
 				}
 			});
 
-			
-
 		},
 		onHide() {
 			//console.log('hide')
@@ -66,6 +64,7 @@
 			open(e, f, g) {
 				var that = this;
 				that.iStatusBarHeight = uni.getSystemInfoSync().statusBarHeight;
+				
 				uni.getSystemInfo({
 					success: function(res) {
 						that.winWidth = res.windowWidth

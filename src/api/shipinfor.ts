@@ -25,3 +25,9 @@ export const updateePeoplenumber= (data?: any) => {
 
 
 
+export const getLocationinfoList = () => {
+  return http<any>({
+    method:'GET',
+    url: '/api/locationinfo/list'
+  })
+}
